@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Automation Doctor Documentation | AppRL</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--dk:#091E42;--am:#D97B29}
+*{box-sizing:border-box}
+body{margin:0;font-family:'DM Sans',sans-serif;color:#fff;background:linear-gradient(180deg,var(--dk) 0%,#08214a 100%)}
+a{text-decoration:none}
+.nav{position:sticky;top:0;z-index:20;background:rgba(7,27,58,.9);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.06)}
+.nav-in{max-width:1240px;margin:0 auto;padding:0 26px;height:72px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:12px;color:#fff;font-weight:800}
+.brand-mark{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#1e5fff,#31d0ff);display:grid;place-items:center;font-weight:900}
+.nav-links{display:flex;gap:18px}
+.nav-links a{color:rgba(255,255,255,.75)}
+.wrap{max-width:1240px;margin:0 auto;padding:34px 26px 70px}
+.label{color:#25c9ff;text-transform:uppercase;letter-spacing:.12em;font-size:.83rem;font-weight:900;margin-bottom:8px}
+.hero{background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08);border-radius:26px;padding:34px;box-shadow:0 14px 40px rgba(0,0,0,.18)}
+.hero-head{display:flex;gap:18px;align-items:center}
+.app-icon{width:74px;height:74px;border-radius:18px;background:linear-gradient(135deg,#14346a,#1b7ad9);display:grid;place-items:center;overflow:hidden;border:1px solid rgba(255,255,255,.08)}
+.app-icon img{width:100%;height:100%;object-fit:contain}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(2rem,3.6vw,3.4rem);line-height:1.02;margin:0}
+.hero p{color:rgba(255,255,255,.82);line-height:1.75;font-size:1.05rem;max-width:900px}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:12px 18px;border-radius:14px;border:1px solid transparent;font-weight:800;background:linear-gradient(135deg,#2d8cff,#31d0ff);color:#fff;margin-top:18px}
+footer{max-width:1240px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255,.45);font-size:.92rem}
+@media(max-width:980px){.nav-links{display:none}}
+</style>
+</head>
+<body>
+<header class="nav">
+  <div class="nav-in">
+    <div class="brand"><div class="brand-mark">A</div><span>AppRL</span></div>
+    <div class="nav-links"><a href="../index.html">Home</a></div>
+  </div>
+</header>
+<div class="wrap">
+  <div class="label">DOCUMENTATION</div>
+  <div class="hero">
+    <div class="hero-head">
+      <div class="app-icon"><img src="../assets/automation-doctor-logo.png" alt="Automation Doctor"></div>
+      <div>
+        <h1>Automation Doctor for Jira</h1>
+      </div>
+    </div>
+    <p>Automation Doctor analyzes observed Automation Steps consumption, compares it against your organization's monthly allowance, and prioritizes which rules to review first &mdash; before extra usage billing starts on December 3, 2026.</p>
+    <a class="btn" href="./How_to_Configure/index.html">Read How it Works &rarr;</a>
+  </div>
+  
+<div class="hub-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-top:8px">
+  <a class="hub-card" href="./How_to_Configure/index.html" style="display:block;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:22px;color:#fff">
+    <div style="font-weight:900;font-size:1.05rem;margin-bottom:6px">How it Works</div>
+    <div style="color:rgba(255,255,255,.72);font-size:.95rem;line-height:1.55">Architecture, what the app reads, what it never touches, and current known limitations.</div>
+  </a>
+  <a class="hub-card" href="./Privacy_Policy/index.html" style="display:block;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:22px;color:#fff">
+    <div style="font-weight:900;font-size:1.05rem;margin-bottom:6px">Privacy Policy</div>
+    <div style="color:rgba(255,255,255,.72);font-size:.95rem;line-height:1.55">What data is accessed, where it's stored, and what is never collected.</div>
+  </a>
+  <a class="hub-card" href="./Terms_of_Use/index.html" style="display:block;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:22px;color:#fff">
+    <div style="font-weight:900;font-size:1.05rem;margin-bottom:6px">Terms of Use</div>
+    <div style="color:rgba(255,255,255,.72);font-size:.95rem;line-height:1.55">Conditions for installing and using Automation Doctor.</div>
+  </a>
+  <a class="hub-card" href="./Trust_Center/index.html" style="display:block;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:22px;color:#fff">
+    <div style="font-weight:900;font-size:1.05rem;margin-bottom:6px">Trust Center</div>
+    <div style="color:rgba(255,255,255,.72);font-size:.95rem;line-height:1.55">Security posture, egress, experimental data sources, and how to report a vulnerability.</div>
+  </a>
+</div>
+
+</div>
+<footer>AppRL documentation hub.</footer>
+</body>
+</html>
