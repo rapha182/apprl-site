@@ -27,6 +27,7 @@ a{text-decoration:none}
 .btn{display:inline-flex;align-items:center;justify-content:center;padding:12px 18px;border-radius:14px;border:1px solid transparent;font-weight:800;background:linear-gradient(135deg,#2d8cff,#31d0ff);color:#fff;margin-top:18px}
 footer{max-width:1240px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255,.45);font-size:.92rem}
 @media(max-width:980px){.nav-links{display:none}}
+.hub-icon{width:52px;height:52px;border-radius:14px;background:#fff;color:#091E42;display:grid;place-items:center;font-size:28px;flex:0 0 auto}
 /* I18N */
 .nav-links{align-items:center}
 .lang-select{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:#fff;border-radius:8px;padding:.5rem .8rem;font:500 .82rem 'DM Sans',sans-serif;outline:none;cursor:pointer}
@@ -55,21 +56,25 @@ footer{max-width:1240px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
   </div>
   
 <div class="hub-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-top:8px">
-  <a class="hub-card" href="./How_to_Configure/index.html" style="display:block;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:22px;color:#fff">
-    <div style="font-weight:900;font-size:1.05rem;margin-bottom:6px" data-pt="Como funciona">How it Works</div>
-    <div style="color:rgba(255,255,255,.72);font-size:.95rem;line-height:1.55" data-pt="Funcionalidades, permissões, arquitetura, o que o app nunca faz e limitações conhecidas.">Features, permissions, architecture, what the app never does, and known limitations.</div>
+  <a class="hub-card" href="./How_to_Configure/index.html" style="display:flex;gap:14px;align-items:flex-start;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:22px;color:#fff">
+    <div class="hub-icon">⚙️</div>
+    <div>    <div style="font-weight:900;font-size:1.05rem;margin-bottom:6px" data-pt="Como funciona">How it Works</div>
+    <div style="color:rgba(255,255,255,.72);font-size:.95rem;line-height:1.55" data-pt="Funcionalidades, permissões, arquitetura, o que o app nunca faz e limitações conhecidas.">Features, permissions, architecture, what the app never does, and known limitations.</div></div>
   </a>
-  <a class="hub-card" href="./Privacy_Policy/index.html" style="display:block;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:22px;color:#fff">
-    <div style="font-weight:900;font-size:1.05rem;margin-bottom:6px" data-pt="Política de Privacidade">Privacy Policy</div>
-    <div style="color:rgba(255,255,255,.72);font-size:.95rem;line-height:1.55" data-pt="Quais dados são acessados, como são tratados e o que nunca é coletado.">What data is accessed, how it is handled, and what is never collected.</div>
+  <a class="hub-card" href="./Privacy_Policy/index.html" style="display:flex;gap:14px;align-items:flex-start;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:22px;color:#fff">
+    <div class="hub-icon">🔒</div>
+    <div>    <div style="font-weight:900;font-size:1.05rem;margin-bottom:6px" data-pt="Política de Privacidade">Privacy Policy</div>
+    <div style="color:rgba(255,255,255,.72);font-size:.95rem;line-height:1.55" data-pt="Quais dados são acessados, como são tratados e o que nunca é coletado.">What data is accessed, how it is handled, and what is never collected.</div></div>
   </a>
-  <a class="hub-card" href="./Terms_of_Use/index.html" style="display:block;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:22px;color:#fff">
-    <div style="font-weight:900;font-size:1.05rem;margin-bottom:6px" data-pt="Termos de Uso">Terms of Use</div>
-    <div style="color:rgba(255,255,255,.72);font-size:.95rem;line-height:1.55" data-pt="Condições para instalar e usar o Approval Inbox.">Conditions for installing and using Approval Inbox.</div>
+  <a class="hub-card" href="./Terms_of_Use/index.html" style="display:flex;gap:14px;align-items:flex-start;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:22px;color:#fff">
+    <div class="hub-icon">🧾</div>
+    <div>    <div style="font-weight:900;font-size:1.05rem;margin-bottom:6px" data-pt="Termos de Uso">Terms of Use</div>
+    <div style="color:rgba(255,255,255,.72);font-size:.95rem;line-height:1.55" data-pt="Condições para instalar e usar o Approval Inbox.">Conditions for installing and using Approval Inbox.</div></div>
   </a>
-  <a class="hub-card" href="./Trust_Center/index.html" style="display:block;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:22px;color:#fff">
-    <div style="font-weight:900;font-size:1.05rem;margin-bottom:6px" data-pt="Central de Confiança">Trust Center</div>
-    <div style="color:rgba(255,255,255,.72);font-size:.95rem;line-height:1.55" data-pt="Postura de segurança, permissões, tratamento de dados e como reportar uma vulnerabilidade.">Security posture, permissions, data handling, and how to report a vulnerability.</div>
+  <a class="hub-card" href="./Trust_Center/index.html" style="display:flex;gap:14px;align-items:flex-start;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:22px;color:#fff">
+    <div class="hub-icon">🔗</div>
+    <div>    <div style="font-weight:900;font-size:1.05rem;margin-bottom:6px" data-pt="Central de Confiança">Trust Center</div>
+    <div style="color:rgba(255,255,255,.72);font-size:.95rem;line-height:1.55" data-pt="Postura de segurança, permissões, tratamento de dados e como reportar uma vulnerabilidade.">Security posture, permissions, data handling, and how to report a vulnerability.</div></div>
   </a>
 </div>
 
