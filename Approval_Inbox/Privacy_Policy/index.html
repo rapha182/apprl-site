@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>How Automation Doctor Works | AppRL</title>
+<title>Privacy Policy | Approval Inbox | AppRL</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>:root{--bl:#0052CC;--bl2:#2684FF;--bl3:#003884;--tl:#00B8D9;--tl2:#79E2F2;--dk:#091E42;--dk2:#0a1f3e;--am:#D97B29;}
 *{box-sizing:border-box}
@@ -64,7 +64,7 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
     </div>
     <div class="nav-links">
       <a href="../../index.html">Home</a>
-      <a href="../index.html">Automation Doctor</a>
+      <a href="../index.html">Approval Inbox</a>
     </div>
   </div>
 </header>
@@ -72,74 +72,68 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
   <div class="doc-grid">
     <aside class="sidebar">
       <div class="side-top">
-        <div class="side-icon"><img src="../../assets/automation-doctor-logo.png" alt="Automation Doctor"></div>
+        <div class="side-icon"><img src="../../assets/approval-inbox-logo.png" alt="Approval Inbox"></div>
         <div>
-          <div class="side-title">Automation Doctor</div>
+          <div class="side-title">Approval Inbox</div>
           <div class="side-sub">for Jira</div>
         </div>
       </div>
       <nav class="side-nav">
-        <a class="active" href="../How_to_Configure/index.html">How it Works</a>
-<a href="../Privacy_Policy/index.html">Privacy Policy</a>
+        <a href="../How_to_Configure/index.html">How it Works</a>
+<a class="active" href="../Privacy_Policy/index.html">Privacy Policy</a>
 <a href="../Terms_of_Use/index.html">Terms of Use</a>
 <a href="../Trust_Center/index.html">Trust Center</a>
       </nav>
     </aside>
     <main>
       <div class="doc-card">
-        <div class="doc-label">DOCUMENTATION</div>
+        <div class="doc-label">LEGAL</div>
         <div class="doc-header">
-          <h1>How Automation Doctor Works</h1>
+          <h1>Privacy Policy</h1>
         </div>
-        <p class="doc-intro">An overview of the architecture, what the app reads, what it never touches, and current known limitations.</p>
+        <p class="doc-intro">What data Approval Inbox accesses and processes when installed on a Jira Cloud site.</p>
         
         <div class="doc-content">
+<h2>1. Who we are</h2>
+<p>Approval Inbox for Jira is developed and maintained by AppRL. Contact: <a href="mailto:support@app-rl.com" style="color:#79E2F2">support@app-rl.com</a>.</p>
 
-<h2>What the app solves</h2>
-<p>Starting December 3, 2026, Atlassian begins billing for Automation Steps that exceed the monthly allowance of your plan &mdash; including Enterprise, which was previously unlimited. Jira does not natively show which specific automation rule is responsible for that consumption, or let you simulate a rule's cost before publishing it. Automation Doctor covers both gaps, inside Jira.</p>
+<h2>2. What the app does, in short</h2>
+<p>The app lists Jira Service Management approvals waiting for the current user, lets the user approve or decline them, and lets authorized users extract approval decisions and metrics. Every action runs as the signed-in user, with that user's own Jira permissions.</p>
 
-<h2>Architecture overview</h2>
-<pre style="background:rgba(0,0,0,.25);border-radius:12px;padding:16px;overflow-x:auto;color:#cde9ff;font-size:.86rem;line-height:1.6">Admin
-  |  (1) Connects with an administrator email + API token
-  v
-Automation Doctor (Forge app, runs inside Atlassian's infrastructure)
-  |
-  |--> api.atlassian.com/automation/...           (rule definitions, public API)
-  |--> {site}.atlassian.net/gateway/.../highUsageFlows   (observed usage, experimental)
-  |--> standard Jira REST API (JQL, changelog, fields)    (structural estimate fallback)
-  v
-In-product screens: Overview, Rules, Review Priority</pre>
-
-<h2>The three screens</h2>
-<h3>Overview</h3>
-<p>Sums observed Automation Steps consumption for every automation on the site, projects month-end as a range (not a single number), and compares it against the monthly allowance the administrator configures.</p>
-<h3>Rules</h3>
-<p>Lets you pick a specific automation and simulate its consumption, using observed data when available or a structural estimate (trigger, conditions, branches, loops) when it isn't.</p>
-<h3>Review Priority</h3>
-<p>A ranking that combines total consumption, execution volume, steps per execution, and allowance share, to point at which rule to review first.</p>
-
-<h2>What the app never does</h2>
+<h2>3. Data the app accesses</h2>
+<h3>3.1 Jira data</h3>
 <ul>
-<li>Never creates, edits, enables, disables, or deletes any automation rule.</li>
-<li>Never modifies issues, fields, comments, or any project data.</li>
-<li>Never sends notifications or interacts with end users outside the admin screen.</li>
+<li>Approval stages of JSM requests: stage name, result, dates, approvers (display name and account ID) and each approver's decision.</li>
+<li>Basic issue data needed to show and filter approvals: key, summary, type, status, priority, reporter, created and resolved dates.</li>
+<li>Fields the user chooses to see in the request details, limited to an allowed list.</li>
+<li>In the customer portal: the requests waiting for the customer's approval and short request field values shown to help the decision.</li>
+<li>The user's own permissions, to check access to the approval report.</li>
+</ul>
+<p>The app does <strong>not</strong> read comments or attachments.</p>
+
+<h3>3.2 What the app does not collect</h3>
+<ul>
+<li>No payment card data (handled by Atlassian or the payment processor directly).</li>
+<li>No third-party tracking cookies or pixels.</li>
+<li>Data is never sold, rented, or shared with third parties for advertising.</li>
+<li>Customer data is never used to train AI models.</li>
 </ul>
 
-<h2>Data source reliability</h2>
-<table>
-<tr><th>Source</th><th>Type</th><th>Reliability</th></tr>
-<tr><td>Rule definitions (Automation Rule Management API)</td><td>Public, documented</td><td>High</td></tr>
-<tr><td>Observed consumption (highUsageFlows / highestUsages)</td><td>Internal Atlassian UI endpoint</td><td>Experimental &mdash; not officially supported; the app degrades gracefully (Full / Execution-only / Unavailable) and falls back to the structural estimate</td></tr>
-<tr><td>Structural estimate</td><td>Computed from the rule's own definition</td><td>High for structure; depends on the quality of the parameters entered</td></tr>
-</table>
+<h2>4. Where data is stored</h2>
+<p>The app does not store customer data. It does not use Forge storage, caches, or scheduled jobs. Data is read from Jira when the user opens a screen and stays only in that browser session. The CSV report is generated in the user's browser and saved only where the user chooses.</p>
 
-<div class="warn"><strong>Known limitation:</strong> the Automation Rule Management API does not yet support direct authentication from Forge/OAuth2 apps. This version authenticates with an administrator email and API token, stored in the Forge Secret Store. We track this limitation and will move to native authentication as soon as Atlassian makes it available.</div>
+<h2>5. Third-party sharing</h2>
+<p>The app only communicates with Atlassian's own APIs, through the Forge platform. No data is sent to any server operated by the developer, to any analytics provider, or to any subprocessor.</p>
 
-<h2>Languages</h2>
-<p>Portuguese (Brazil), English (US), Spanish.</p>
+<h2>6. Retention and deletion</h2>
+<ul>
+<li>Nothing is kept after the user closes the screen.</li>
+<li>Approve and decline decisions are recorded in Jira Service Management, as part of the request, like any decision made in Jira.</li>
+<li>Uninstalling the app leaves no app data behind, because the app stores none.</li>
+</ul>
 
-<h2>Support</h2>
-<p>Email <a href="mailto:support@app-rl.com" style="color:#79E2F2">support@app-rl.com</a>.</p>
+<h2>7. Contact</h2>
+<p>Questions about this policy: <a href="mailto:support@app-rl.com" style="color:#79E2F2">support@app-rl.com</a>.</p>
 
         </div>
       </div>

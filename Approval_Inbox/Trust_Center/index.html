@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Privacy Policy — Automation Doctor | AppRL</title>
+<title>Trust Center | Approval Inbox | AppRL</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>:root{--bl:#0052CC;--bl2:#2684FF;--bl3:#003884;--tl:#00B8D9;--tl2:#79E2F2;--dk:#091E42;--dk2:#0a1f3e;--am:#D97B29;}
 *{box-sizing:border-box}
@@ -64,7 +64,7 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
     </div>
     <div class="nav-links">
       <a href="../../index.html">Home</a>
-      <a href="../index.html">Automation Doctor</a>
+      <a href="../index.html">Approval Inbox</a>
     </div>
   </div>
 </header>
@@ -72,75 +72,71 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
   <div class="doc-grid">
     <aside class="sidebar">
       <div class="side-top">
-        <div class="side-icon"><img src="../../assets/automation-doctor-logo.png" alt="Automation Doctor"></div>
+        <div class="side-icon"><img src="../../assets/approval-inbox-logo.png" alt="Approval Inbox"></div>
         <div>
-          <div class="side-title">Automation Doctor</div>
+          <div class="side-title">Approval Inbox</div>
           <div class="side-sub">for Jira</div>
         </div>
       </div>
       <nav class="side-nav">
         <a href="../How_to_Configure/index.html">How it Works</a>
-<a class="active" href="../Privacy_Policy/index.html">Privacy Policy</a>
+<a href="../Privacy_Policy/index.html">Privacy Policy</a>
 <a href="../Terms_of_Use/index.html">Terms of Use</a>
-<a href="../Trust_Center/index.html">Trust Center</a>
+<a class="active" href="../Trust_Center/index.html">Trust Center</a>
       </nav>
     </aside>
     <main>
       <div class="doc-card">
-        <div class="doc-label">LEGAL</div>
+        <div class="doc-label">SECURITY</div>
         <div class="doc-header">
-          <h1>Privacy Policy</h1>
+          <h1>Trust Center</h1>
         </div>
-        <p class="doc-intro">What data Automation Doctor accesses, stores, and processes when installed on a Jira Cloud site.</p>
+        <p class="doc-intro">Security posture, permissions, data handling, and how to report a vulnerability.</p>
         
         <div class="doc-content">
+<h2>Authentication model</h2>
+<p>The App never asks for API tokens or passwords. Every request to Jira runs as the signed-in user through the Forge platform (<code>asUser</code>), so users only see and act on what their own Jira permissions allow.</p>
 
-<h2>1. Who we are</h2>
-<p>Automation Doctor for Jira is developed and maintained by AppRL. Contact: <a href="mailto:support@app-rl.com" style="color:#79E2F2">support@app-rl.com</a>.</p>
-
-<h2>2. What the app does, in short</h2>
-<p>The app analyzes Jira Automation rules installed on the customer's site, estimates Automation Steps consumption, compares it against a monthly allowance configured by the administrator, and presents a review-priority panel. It is read-only: it never modifies, creates, pauses, or executes any automation.</p>
-
-<h2>3. Data the app accesses</h2>
-<h3>3.1 Jira data</h3>
+<h2>Scopes</h2>
 <ul>
-<li>Automation rule definitions (name, state, triggers, conditions, actions, branches/loops), with sensitive fields redacted where the API offers that option.</li>
-<li>Automation Steps consumption metrics per rule, when available.</li>
-<li>Issue metadata strictly necessary to estimate a rule's trigger volume (e.g. approximate count of issues matching a JQL, field/status change history), without storing issue content.</li>
-<li>List of Jira fields (names and IDs), used only to resolve which field a rule watches.</li>
+<li><code>read:jira-work</code>: search issues, read issue fields and check the user's permissions.</li>
+<li><code>read:servicedesk-request</code>: read approvals and requests.</li>
+<li><code>write:servicedesk-request</code>: record approve and decline decisions.</li>
 </ul>
-<p>The app does <strong>not</strong> read issue comments, attachments, descriptions, or service management portal customer data beyond what is strictly necessary for the calculations above.</p>
+<p>The App does not request administrator scopes.</p>
 
-<h3>3.2 Administrator configuration</h3>
+<h2>Report permissions</h2>
+<p>The approval report is protected by two Jira global permissions, "Approval Reports - View" and "Approval Reports - Export", plus Jira administrators. The check runs in the backend on every extraction. If the permission cannot be checked, access is denied.</p>
+
+<h2>Safe decisions</h2>
 <ul>
-<li>An email and API token of an administrator account, provided by the customer's administrator, used exclusively to authenticate calls to the Atlassian Automation API on behalf of the site.</li>
-<li>The monthly Automation Steps allowance, entered manually by the administrator.</li>
-<li>Interface language preference, per user account ID.</li>
+<li>Every approve or decline is confirmed by the user before it is sent.</li>
+<li>Before answering, the backend checks again that the approval is still pending and that the user can answer it.</li>
+<li>Bulk actions are limited to 25 approvals at a time.</li>
 </ul>
 
-<h3>3.3 What the app does not collect</h3>
+<h2>Data handling</h2>
 <ul>
-<li>No payment card data (handled by Atlassian or the payment processor directly).</li>
-<li>No third-party tracking cookies or pixels.</li>
-<li>Data is never sold, rented, or shared with third parties for advertising.</li>
-<li>Customer data is never used to train AI models.</li>
+<li>No customer data is stored: no Forge storage, no cache, no scheduled jobs.</li>
+<li>The fields shown in request details are limited to an allowed list.</li>
+<li>The CSV is generated in the user's browser, with protection against spreadsheet formula injection.</li>
+<li>Inputs such as issue keys, account IDs, project keys and dates are validated before they reach any API.</li>
 </ul>
 
-<h2>4. Where data is stored</h2>
-<p>All storage uses Atlassian's own Forge Key-Value Store, within the data residency already configured for the customer's site. This includes the connection credential (stored as a secret, never exposed back to the frontend), the configured allowance, a short-lived cache of the current month's usage, and the language preference. No customer data is sent to any server operated by the developer outside Atlassian's Forge infrastructure.</p>
+<h2>Network egress</h2>
+<p>The App does not call any external service. It only uses Atlassian's own Jira and Jira Service Management APIs, through the Forge platform.</p>
 
-<h2>5. Third-party sharing</h2>
-<p>The app only communicates with Atlassian's own domains: <code>api.atlassian.com</code> and the installed site's own <code>*.atlassian.net</code> domain. No data is sent to any third-party analytics provider or subprocessor.</p>
+<h2>Customer portal</h2>
+<p>The portal module is available to JSM customers only. All portal calls use the customer-facing JSM API as the signed-in customer, so a customer only sees requests that wait for their own approval.</p>
 
-<h2>6. Retention and deletion</h2>
-<ul>
-<li>The usage cache is automatically replaced every few minutes and is not kept as permanent history.</li>
-<li>Disconnecting the app immediately deletes the stored credential.</li>
-<li>Uninstalling the app removes all associated Forge storage, per the standard Forge platform policy.</li>
-</ul>
+<h2>Large-site resilience</h2>
+<p>The report reads data in pages within the Forge execution time limit and continues automatically, with visible progress. Users can pause and continue an extraction, and repeated rows are removed when pages are merged.</p>
 
-<h2>7. Contact</h2>
-<p>Questions about this policy: <a href="mailto:support@app-rl.com" style="color:#79E2F2">support@app-rl.com</a>.</p>
+<h2>Reporting a vulnerability</h2>
+<p>If you identify a security vulnerability in this App, contact <a href="mailto:support@app-rl.com" style="color:#79E2F2">support@app-rl.com</a> directly, without prior public disclosure.</p>
+
+<h2>Updates to this Trust Center</h2>
+<p>This page is reviewed whenever the App's permissions, data handling or architecture change, and at minimum before any Atlassian Marketplace submission.</p>
 
         </div>
       </div>

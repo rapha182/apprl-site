@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trust Center — Automation Doctor | AppRL</title>
+<title>How Approval Inbox Works | AppRL</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>:root{--bl:#0052CC;--bl2:#2684FF;--bl3:#003884;--tl:#00B8D9;--tl2:#79E2F2;--dk:#091E42;--dk2:#0a1f3e;--am:#D97B29;}
 *{box-sizing:border-box}
@@ -64,7 +64,7 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
     </div>
     <div class="nav-links">
       <a href="../../index.html">Home</a>
-      <a href="../index.html">Automation Doctor</a>
+      <a href="../index.html">Approval Inbox</a>
     </div>
   </div>
 </header>
@@ -72,76 +72,80 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
   <div class="doc-grid">
     <aside class="sidebar">
       <div class="side-top">
-        <div class="side-icon"><img src="../../assets/automation-doctor-logo.png" alt="Automation Doctor"></div>
+        <div class="side-icon"><img src="../../assets/approval-inbox-logo.png" alt="Approval Inbox"></div>
         <div>
-          <div class="side-title">Automation Doctor</div>
+          <div class="side-title">Approval Inbox</div>
           <div class="side-sub">for Jira</div>
         </div>
       </div>
       <nav class="side-nav">
-        <a href="../How_to_Configure/index.html">How it Works</a>
+        <a class="active" href="../How_to_Configure/index.html">How it Works</a>
 <a href="../Privacy_Policy/index.html">Privacy Policy</a>
 <a href="../Terms_of_Use/index.html">Terms of Use</a>
-<a class="active" href="../Trust_Center/index.html">Trust Center</a>
+<a href="../Trust_Center/index.html">Trust Center</a>
       </nav>
     </aside>
     <main>
       <div class="doc-card">
-        <div class="doc-label">SECURITY</div>
+        <div class="doc-label">DOCUMENTATION</div>
         <div class="doc-header">
-          <h1>Trust Center</h1>
+          <h1>How Approval Inbox Works</h1>
         </div>
-        <p class="doc-intro">Security posture, network egress, experimental data sources, and how to report a vulnerability.</p>
+        <p class="doc-intro">An overview of the features, who can use each part, the architecture, what the app never does, and current known limitations.</p>
         
         <div class="doc-content">
+<h2>What the app solves</h2>
+<p>In Jira Service Management, approvers have no single place to see and decide every approval waiting for them, and Jira Cloud has no JQL function to find which requests a specific person approved or declined. Approval Inbox covers both gaps, inside Jira, using the native JSM approvals you already have.</p>
 
-<h2>Authentication model</h2>
-<p>The Atlassian Automation Rule Management API does not yet support direct authentication from Forge/OAuth2 apps. This version uses Basic Auth with an administrator email and API token, provided voluntarily by the customer's administrator.</p>
-<div class="warn"><strong>Transparency:</strong> Atlassian recommends apps avoid collecting customer API tokens in favor of a distributable OAuth 2.0 (3LO) flow. We evaluated this migration; it is currently blocked because the scope required for the Rule Management API (<code>manage:jira-automation</code>) is not yet available for OAuth 2.0 (3LO) apps, confirmed via the Atlassian Developer Console. We will migrate as soon as that scope is available.</p></div>
-<h3>How the credential is handled</h3>
+<h2>Architecture overview</h2>
+<pre style="background:rgba(0,0,0,.25);border-radius:12px;padding:16px;overflow-x:auto;color:#cde9ff;font-size:.86rem;line-height:1.6">User (Jira user or JSM portal customer)
+  |  (1) Opens the app; every call runs as that user (asUser)
+  v
+Approval Inbox (Forge app, runs inside Atlassian's infrastructure)
+  |
+  |--> Jira REST API v3 (JQL search, issue, fields, my permissions)
+  |--> JSM REST API (request approvals: read and answer, pending approvals)
+  v
+In-product screens: My approvals, Approval report, Metrics, Issue panel, Portal</pre>
+
+<h2>The screens</h2>
+<h3>My approvals</h3>
+<p>Lists every JSM approval waiting for the current user, in any project, oldest first, with counters for pending, high priority and older than 3 days. Users can filter, open request details, and approve or decline one request or up to 25 at once. Every decision is confirmed first and checked again before it is sent.</p>
+<h3>Approval report</h3>
+<p>Extracts who approved or declined each request. Filter by approver, decision, projects, created or resolved date, and extra JQL. Pages are read automatically until the end, the extraction can be paused and continued, and the result can be downloaded as a CSV ready for Excel.</p>
+<h3>Metrics</h3>
+<p>Median stage time, approval rate, approvals waiting now, stages stuck for more than 3 days, median time per approver, who is holding approvals right now, and a summary per approver. Calculated from the extracted data, with no extra calls.</p>
+<h3>Issue panel</h3>
+<p>On service desk issues, an Approvals panel shows each approval stage, its approvers and their votes, with Approve and Decline buttons when the user can answer.</p>
+<h3>Customer portal</h3>
+<p>Portal customers who are approvers get "My approvals" in the portal profile menu, with single and bulk approve or decline.</p>
+
+<h2>Who can use each part</h2>
+<table>
+<tr><th>User</th><th>Access</th></tr>
+<tr><td>Any licensed Jira user</td><td>My approvals and the issue panel, for their own approvals</td></tr>
+<tr><td>Jira administrators (Administer Jira)</td><td>Approval report, metrics and CSV export, always</td></tr>
+<tr><td>Users or groups granted "Approval Reports - View"</td><td>Approval report and metrics</td></tr>
+<tr><td>Users or groups granted "Approval Reports - Export"</td><td>CSV download</td></tr>
+<tr><td>JSM portal customers</td><td>My approvals in the customer portal</td></tr>
+</table>
+<p>Report access is granted in Jira settings, under System, Global permissions.</p>
+
+<h2>What the app never does</h2>
 <ul>
-<li>Stored exclusively via Forge's secret storage (<code>kvs.setSecret</code>).</li>
-<li>Never returned to the frontend once configured.</li>
-<li>Used only in the app's backend, to build the Authorization header for calls to the Atlassian Automation API.</li>
-<li>Tested with a verification call before being persisted, to fail fast on an invalid credential.</li>
+<li>Never shows or approves anything the user could not already see or approve in Jira.</li>
+<li>Never stores customer data: no Forge storage, no cache, no scheduled jobs.</li>
+<li>Never sends data outside Atlassian.</li>
+<li>Never changes workflows, approval configuration, or project settings.</li>
 </ul>
 
-<h2>Network egress</h2>
-<p>The app communicates only with Atlassian's own domains:</p>
-<ul>
-<li><code>https://api.atlassian.com</code> &mdash; Automation Rule Management API (publicly documented).</li>
-<li>The installed site's own validated <code>*.atlassian.net</code> domain &mdash; used for an internal endpoint (<code>highUsageFlows</code>/<code>highestUsages</code>) that powers the Overview screen with observed consumption data.</li>
-</ul>
-<p>Forge manifest permissions cannot be scoped to a single customer's hostname ahead of time (every customer has a different Atlassian domain), so the manifest declares the wildcard pattern <code>*.atlassian.net</code>, while runtime code restricts every request to the current installation's own site: the base URL is fetched from Jira's own <code>serverInfo</code> endpoint (never free user input), the protocol must be HTTPS, the hostname must exactly match the <code>atlassian.net</code> domain (rejecting look-alikes such as <code>atlassian.net.malicious-domain.com</code>), non-standard ports are rejected, and embedded credentials in the URL are rejected.</p>
+<div class="warn"><strong>Known limitations:</strong> Forge apps do not work when an administrator uses "Log in as user"; the app shows a clear message in this case. JSM records when an approval stage ends, not when each person voted, so metrics use stage times. In the customer portal, the app is available to JSM customers; Atlassian accounts without a Jira license are not supported there.</div>
 
-<h2>Experimental data source (Overview screen)</h2>
-<p>The <code>highUsageFlows</code>/<code>highestUsages</code> endpoints are internal endpoints used by Atlassian's own Automation UI, not a publicly documented or supported API. Because of that:</p>
-<ul>
-<li>Every response using this source is explicitly marked <code>experimental</code>.</li>
-<li>The app treats this source with capability-based degradation, checked via a health check when the credential is saved and on every Overview load: <strong>Full Usage</strong> (Automation Steps and execution ranking both available), <strong>Execution-only</strong> (Steps unavailable, ranking still works), or <strong>Unavailable</strong> (falls back to the structural analyzer, with no impact on the rest of the app).</li>
-<li>A failure in this source never invalidates an otherwise-valid connection to the Rule Management API.</li>
-</ul>
+<h2>Languages</h2>
+<p>Portuguese (Brazil), English (US).</p>
 
-<h2>Error handling</h2>
-<p>The interface only receives stable, public error identifiers and messages (e.g. authentication failure, rate limiting, provider unavailable). Raw HTTP response bodies and internal details are never included in resolver responses; this sanitization has dedicated automated test coverage. Backend logs may contain bounded diagnostic messages but never log the API token or Authorization header.</p>
-
-<h2>Cached data</h2>
-<p>The app keeps a short cache (up to a few minutes) of the current month's observed consumption, to reduce repeated calls to the usage endpoint. This cache holds only automation metadata (name, state, executions, steps, timestamps) &mdash; never the access credential. The interface shows when the data was last refreshed and offers a manual refresh action.</p>
-
-<h2>Large-site pagination resilience</h2>
-<p>On sites with a large number of rules, loading the full Usage dataset in a single call could exceed Forge's execution time limit for a function invocation. To handle this, the app loads Usage in small page chunks across multiple continuation calls, with visible progress in the UI. If a specific page fails persistently, it is skipped after repeated attempts so the rest of the dataset still loads, rather than blocking indefinitely; the count of skipped pages is shown in the interface. The app also backs off with increasing delay if the endpoint responds with a rate limit.</p>
-
-<h2>Cost estimate calculation</h2>
-<p>The app calculates an estimated exposure to Atlassian's extra-usage billing (effective December 3, 2026), using the public formula <code>excess steps &divide; 1,000 &times; US$0.50</code>. This estimate is calculated locally from observed/projected consumption and the allowance entered by the administrator; it does not reflect a real invoice, and is always shown with that disclaimer. It is presented as a range (not a single number), with a declared heuristic margin, since we do not have access to the daily time series that Atlassian's own native forecast uses.</p>
-
-<h2>Testing</h2>
-<p>The app's calculation logic (allowance impact, portfolio aggregation, usage normalization, pagination resilience, error sanitization, and host validation) is covered by an automated test suite, including tests that specifically assert sensitive details never leak into public error messages, and that hostnames mimicking Atlassian's domain are rejected.</p>
-
-<h2>Reporting a vulnerability</h2>
-<p>If you identify a security vulnerability in this App, contact <a href="mailto:support@app-rl.com" style="color:#79E2F2">support@app-rl.com</a> directly, without prior public disclosure.</p>
-
-<h2>Updates to this Trust Center</h2>
-<p>This page is reviewed whenever the authentication architecture or data sources change, and at minimum before any Atlassian Marketplace submission.</p>
+<h2>Support</h2>
+<p>Email <a href="mailto:support@app-rl.com" style="color:#79E2F2">support@app-rl.com</a>.</p>
 
         </div>
       </div>

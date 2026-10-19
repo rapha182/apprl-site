@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Terms of Use — Automation Doctor | AppRL</title>
+<title>Terms of Use | Approval Inbox | AppRL</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>:root{--bl:#0052CC;--bl2:#2684FF;--bl3:#003884;--tl:#00B8D9;--tl2:#79E2F2;--dk:#091E42;--dk2:#0a1f3e;--am:#D97B29;}
 *{box-sizing:border-box}
@@ -64,7 +64,7 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
     </div>
     <div class="nav-links">
       <a href="../../index.html">Home</a>
-      <a href="../index.html">Automation Doctor</a>
+      <a href="../index.html">Approval Inbox</a>
     </div>
   </div>
 </header>
@@ -72,9 +72,9 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
   <div class="doc-grid">
     <aside class="sidebar">
       <div class="side-top">
-        <div class="side-icon"><img src="../../assets/automation-doctor-logo.png" alt="Automation Doctor"></div>
+        <div class="side-icon"><img src="../../assets/approval-inbox-logo.png" alt="Approval Inbox"></div>
         <div>
-          <div class="side-title">Automation Doctor</div>
+          <div class="side-title">Approval Inbox</div>
           <div class="side-sub">for Jira</div>
         </div>
       </div>
@@ -91,36 +91,35 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
         <div class="doc-header">
           <h1>Terms of Use</h1>
         </div>
-        <p class="doc-intro">Conditions for installing and using Automation Doctor for Jira.</p>
+        <p class="doc-intro">Conditions for installing and using Approval Inbox for Jira.</p>
         
         <div class="doc-content">
-
 <h2>1. Acceptance</h2>
-<p>By installing or using Automation Doctor for Jira ("the App"), the customer agrees to these Terms of Use. If you do not agree, do not install or use the App.</p>
+<p>By installing or using Approval Inbox for Jira ("the App"), the customer agrees to these Terms of Use. If you do not agree, do not install or use the App.</p>
 
 <h2>2. What the App does</h2>
-<p>The App is a read-only analysis tool for Jira Automation. It estimates Automation Steps consumption, compares it against a configured allowance, and prioritizes rules for review. It does not modify, create, or execute any automation, issue, or project data.</p>
+<p>The App lists Jira Service Management approvals, lets users approve or decline them, and lets authorized users extract approval decisions and metrics. It works on top of native JSM approvals and does not change workflows or approval configuration.</p>
 
 <h2>3. Distribution</h2>
 <p>The App is currently distributed directly by AppRL, outside the Atlassian Marketplace, via an installation link or direct deployment. It may be listed on the Atlassian Marketplace in the future, in which case the applicable Marketplace terms would also apply to that distribution channel.</p>
 
-<h2>4. Administrator credential</h2>
-<p>The App requires an administrator email and API token to authenticate against the Atlassian Automation API, because that API does not yet support native Forge/OAuth2 authentication. The customer is responsible for using a dedicated, least-privilege service account for this purpose, and for revoking the token if the App is uninstalled or the relationship ends.</p>
+<h2>4. Decisions made with the App</h2>
+<p>Approve and decline actions are recorded in Jira Service Management as the signed-in user, exactly as if made in Jira. They may transition requests and run automations configured by the customer. The customer is responsible for the decisions its users make, and for granting report permissions only to the right people.</p>
 
-<h2>5. No warranty on estimates</h2>
-<p>Automation Steps forecasts, allowance impact percentages, and extra-usage cost estimates shown by the App are <strong>estimates</strong>, calculated with a declared heuristic margin, not statistical guarantees, and not an invoice. They do not reflect other products in the customer's organization, purchased usage packs, administrative limits, taxes, or whether extra usage billing is enabled. Atlassian's own Platform Usage screen is the authoritative source for actual billing.</p>
+<h2>5. No warranty on metrics</h2>
+<p>Metrics such as stage times and approval rates are calculated from the data available in Jira at the time of extraction. Jira Service Management records when an approval stage ends, not when each person voted, so stage times are an approximation for stages with several approvers.</p>
 
 <h2>6. Availability</h2>
-<p>Part of the App's functionality depends on an Atlassian endpoint that is not officially documented or supported. The App is designed to degrade gracefully if that endpoint is unavailable, but AppRL cannot guarantee its continued availability, since it is outside AppRL's control.</p>
+<p>The App depends on the Atlassian Forge platform and on Jira and Jira Service Management APIs. AppRL cannot guarantee the availability of those services, since they are outside AppRL's control.</p>
 
 <h2>7. Fees</h2>
 <p>Where the App is offered under a paid plan, the price and billing cadence are as communicated at the time of purchase. Fees are non-refundable except as required by applicable law.</p>
 
 <h2>8. Termination</h2>
-<p>Either party may terminate use of the App at any time by uninstalling it or disconnecting the stored credential. Sections relating to data handling, warranty disclaimers, and limitation of liability survive termination.</p>
+<p>Either party may terminate use of the App at any time by uninstalling it. Sections relating to data handling, warranty disclaimers, and limitation of liability survive termination.</p>
 
 <h2>9. Limitation of liability</h2>
-<p>The App is provided "as is". AppRL is not liable for decisions made based on estimates shown by the App, including any Automation Steps overage charges billed by Atlassian.</p>
+<p>The App is provided "as is". AppRL is not liable for decisions made with the App or based on reports and metrics shown by the App.</p>
 
 <h2>10. Contact</h2>
 <p>Questions about these terms: <a href="mailto:support@app-rl.com" style="color:#79E2F2">support@app-rl.com</a>.</p>
