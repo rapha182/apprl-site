@@ -161,6 +161,7 @@ Issue panel and audit log show what happened and why</pre>
 </ul>
 
 <div class="warn"><strong>Known limitations:</strong> the app does not send emails, so the person needs to let whoever authorizes the absence know. The approver field must be on the issue type's edit screen. In group fields the app only adds a notice. Approvers coming from Assets fields are not handled yet.</div>
+<div class="warn"><strong>Group approvals where everyone must approve:</strong> if the approval step uses a group field and requires every member of the group to approve, the absent person is still a member, so the approval waits for them until they come back. The app does not add the substitute to the group or remove the absent person, because group membership applies to the whole site. For approvals where everyone must approve, use the user field (Approvers) with the people listed one by one: then the app replaces only the absent person in that request and the approval keeps moving.</div>
 
 <h2>Languages</h2>
 <p>Portuguese (Brazil), English (US).</p>
@@ -227,6 +228,7 @@ Painel na issue e auditoria mostram o que aconteceu e por quê</pre>
 </ul>
 
 <div class="warn"><strong>Limitações conhecidas:</strong> o app não manda e-mail, então a pessoa precisa avisar quem vai autorizar a ausência. O campo de aprovadores precisa estar na tela de edição do tipo de issue. Em campos de grupo o app só registra um aviso. Aprovadores vindos de campos do Assets ainda não são tratados.</div>
+<div class="warn"><strong>Aprovação por grupo em que todos precisam aprovar:</strong> se a etapa de aprovação usa um campo de grupo e exige que todos os membros aprovem, a pessoa ausente continua no grupo, então a aprovação fica esperando por ela até a volta. O app não coloca o substituto no grupo nem tira a pessoa ausente, porque o grupo vale pro site inteiro. Pra aprovações em que todos precisam aprovar, use o campo de usuários (Approvers) com as pessoas listadas uma a uma: aí o app troca só a pessoa ausente naquele pedido e a aprovação segue.</div>
 
 <h2>Idiomas</h2>
 <p>Português (Brasil), Inglês (EUA).</p>
