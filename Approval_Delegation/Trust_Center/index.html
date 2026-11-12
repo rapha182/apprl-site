@@ -112,8 +112,8 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
 <li><code>write:jira-work</code>: update the approver fields.</li>
 <li><code>read:jira-user</code>: read user names, account type, product access and groups, and check admin permission.</li>
 <li><code>storage:app</code>: keep absences, the audit log and settings in Forge hosted storage.</li>
+<li><code>manage:jira-configuration</code> (with impersonation): only for Group approvals, to read group members and create, adjust and delete the App's own <code>ad-cobertura-</code> groups. Creating groups needs a site admin, so the App acts on behalf of the admin who turned the option on. With the option off, this scope is not used.</li>
 </ul>
-<p>The App does not request administrator scopes such as <code>manage:jira-configuration</code>.</p>
 
 <h2>Controls against misuse</h2>
 <ul>
@@ -122,6 +122,8 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
 <li>The substitute can never be the requester of the issue (segregation of duties).</li>
 <li>App accounts, such as automation users, cannot be substitutes.</li>
 <li>Each backend function only accepts calls from its own screen (portal, admin or issue panel), and an absence is always saved for the signed-in user.</li>
+<li>Only Jira admins can adjust or cancel someone else's absence, and every change goes to the audit log with their name.</li>
+<li>Cover groups never change the original group, grant no project access and are deleted when no open issue uses them.</li>
 </ul>
 
 <h2>Data handling</h2>
@@ -132,10 +134,10 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
 </ul>
 
 <h2>Network egress</h2>
-<p>The App does not call any external service. It only uses Atlassian's own Jira APIs, through the Forge platform.</p>
+<p>The App does not call any external service. It only uses Atlassian's own Jira APIs, through the Forge platform, and is eligible for the Runs on Atlassian program.</p>
 
 <h2>Audit trail</h2>
-<p>Every absence, authorization, delegation, blocked delegation and settings change is recorded with date, action and the people involved. Admins can filter it by type and person.</p>
+<p>Every absence, authorization, delegation, blocked delegation, admin adjustment, cover group change and settings change is recorded with date, action and the people involved. Admins can filter it by type and person.</p>
 
 <h2>Reporting a vulnerability</h2>
 <p>If you identify a security vulnerability in this App, contact <a href="mailto:support@app-rl.com" style="color:#79E2F2">support@app-rl.com</a> directly, without prior public disclosure.</p>
@@ -153,8 +155,8 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
 <li><code>write:jira-work</code>: atualizar os campos de aprovadores.</li>
 <li><code>read:jira-user</code>: ler nome, tipo de conta, acesso aos produtos e grupos dos usuários, e checar a permissão de admin.</li>
 <li><code>storage:app</code>: guardar ausências, auditoria e configurações no armazenamento do Forge.</li>
+<li><code>manage:jira-configuration</code> (com impersonation): só pra Aprovação por grupo, pra ler membros de grupos e criar, ajustar e apagar os grupos <code>ad-cobertura-</code> do próprio App. Criar grupo exige administrador do site, então o App age em nome do admin que ligou a opção. Com a opção desligada, esse escopo não é usado.</li>
 </ul>
-<p>O App não pede escopos de administrador, como <code>manage:jira-configuration</code>.</p>
 
 <h2>Controles contra uso indevido</h2>
 <ul>
@@ -163,6 +165,8 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
 <li>O substituto nunca pode ser o solicitante da issue (segregação de funções).</li>
 <li>Contas de app, como usuários de automação, não podem ser substitutos.</li>
 <li>Cada função do backend só aceita chamadas da sua própria tela (portal, admin ou painel da issue), e a ausência é sempre salva para o usuário logado.</li>
+<li>Só admins do Jira podem ajustar ou cancelar a ausência de outra pessoa, e toda mudança vai pra auditoria com o nome deles.</li>
+<li>Grupos de cobertura nunca alteram o grupo original, não dão acesso a projeto e são apagados quando nenhuma issue aberta usa eles.</li>
 </ul>
 
 <h2>Tratamento de dados</h2>
@@ -173,10 +177,10 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
 </ul>
 
 <h2>Saída de rede</h2>
-<p>O App não chama nenhum serviço externo. Ele usa só as APIs do Jira da própria Atlassian, pela plataforma Forge.</p>
+<p>O App não chama nenhum serviço externo. Ele usa só as APIs do Jira da própria Atlassian, pela plataforma Forge, e é elegível ao programa Runs on Atlassian.</p>
 
 <h2>Trilha de auditoria</h2>
-<p>Toda ausência, autorização, delegação, delegação bloqueada e mudança de configuração fica registrada com data, ação e as pessoas envolvidas. O admin pode filtrar por tipo e por pessoa.</p>
+<p>Toda ausência, autorização, delegação, delegação bloqueada, ajuste feito por admin, mudança de grupo de cobertura e mudança de configuração fica registrada com data, ação e as pessoas envolvidas. O admin pode filtrar por tipo e por pessoa.</p>
 
 <h2>Como reportar uma vulnerabilidade</h2>
 <p>Se você encontrar uma vulnerabilidade de segurança neste App, fale direto com <a href="mailto:support@app-rl.com" style="color:#79E2F2">support@app-rl.com</a>, sem divulgar publicamente antes.</p>

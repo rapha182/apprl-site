@@ -116,31 +116,106 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
 Approval Delegation (Forge app, runs inside Atlassian's infrastructure)
   |  (2) Absence approver authorizes it in the portal (optional setting)
   |  (3) Listens to issue events and runs an hourly job
-  |--> Jira REST API v3 (issues, approver fields, JQL, users, groups)
+  |--> Jira REST API v3 (issues, approver fields, users, groups)
   |--> Forge hosted storage (absences, audit log, settings)
   v
-Approver fields updated: absent person replaced by the substitute
-Issue panel and audit log show what happened and why</pre>
+User approver fields: absent person replaced by the substitute
+Group approver fields: notice, or a cover group (optional setting)
+Issue panel and audit log show what happened and why
+  |
+  v
+Jira Automation (optional): the app's action lists pending requests
+so a scheduled rule can email the approvers</pre>
 
 <h2>The screens</h2>
 <h3>Customer portal: Out of office</h3>
-<p>Available in the portal profile menu for everyone, agents and customers. In <strong>My absences</strong> the person adds the reason (vacation, leave or other), start and end dates, who will cover for them and, when authorization is on, who will authorize it. Each absence shows its status, who authorized or declined it, and how many approvals already went to the substitute.</p>
+<p>Available in the portal profile menu for everyone, agents and customers. In <strong>My absences</strong> the person adds the reason (vacation, leave or other), start and end dates, who will cover for them and, when authorization is on, who will authorize it, plus an optional note. The substitute can be anyone on the site, agent or customer: just type at least 2 letters of the name. Each absence shows its status, who authorized or declined it, and how many approvals already went to the substitute. The person can edit or cancel an absence while it is waiting, scheduled or active. If the chosen substitute is also away in the same period, the portal warns right away.</p>
 <h3>Customer portal: Approve delegation</h3>
-<p>Only people on the absence approvers list see this tab. It shows only the absences waiting for their decision, warns when an absence has already started, and lets them authorize or decline with a comment.</p>
+<p>Only people on the absence approvers list see this tab. It shows only the absences waiting for their decision, warns when an absence has already started, and lets them authorize or decline with a comment. If nobody decides before the end date, the request expires.</p>
 <h3>Jira settings: Settings</h3>
-<p>Jira admins turn automatic delegation on or off, require authorization for absences and manage the list of absence approvers, choose the service projects and the approver fields used in workflows, set a default substitute, and decide whether the absent person stays next to the substitute.</p>
+<ul>
+<li><strong>General:</strong> turn automatic delegation on or off (absences stay saved when it is off) and decide whether absences need authorization.</li>
+<li><strong>Absence approvers:</strong> the list of licensed users who can authorize absences, with how many requests are waiting for each one. People pick one of these names in the portal.</li>
+<li><strong>Where the app works:</strong> the service projects (empty means all) and the approver fields used in your workflows. Any user or group field can be chosen, including the JSM Approvers and Approver groups fields.</li>
+<li><strong>When delegation is not possible:</strong> a default substitute, used when the chain of substitutes loops or ends with nobody available.</li>
+<li><strong>Advanced:</strong> keep the absent person next to the substitute instead of replacing them. Only for approval steps that need 1 approval: if the step needs everyone, keeping the absent person blocks the approval.</li>
+<li><strong>Group approvals:</strong> cover approvals made by a group while one of its members is away. See the section below.</li>
+</ul>
+<h3>Jira settings: Absences</h3>
+<p>Every absence registered in the portal, with filters by status (open, waiting, scheduled, active, ended, declined or expired, cancelled, all) and by person. Each absence shows the reason, substitute, who authorizes, when it was added, the request note, the decision with its comment, and the issues already handed to the substitute. A Jira admin can <strong>adjust</strong> dates, substitute, reason and note, or <strong>cancel</strong> an absence that is waiting, scheduled or active. Adjusting does not change the authorization: a waiting request stays waiting and an authorized absence stays authorized. Everything goes to the audit log with the admin's name.</p>
 <h3>Jira settings: Audit log</h3>
-<p>Every absence, authorization, delegation, blocked delegation and settings change, with filters by type and person and a link to the issue.</p>
+<p>Every absence, authorization, delegation, blocked delegation, group notice, cover group change and settings change, with filters by type (absences, delegations on issues, settings) and by person, and a link to the issue.</p>
 <h3>Issue panel</h3>
-<p>On service desk issues, a side panel shows who the approval moved from and to, until when the person is away, and who authorized the absence.</p>
+<p>On service desk issues, a side panel shows who the approval moved from and to, until when the person is away, who authorized the absence, group notices and cover group swaps.</p>
 
 <h2>Delegation rules</h2>
 <ul>
+<li><strong>When it happens:</strong> right when an absence that already started is authorized, every time an issue is created or edited during the absence, and in the hourly job, which also picks up absences that start on a future date.</li>
 <li><strong>Chain:</strong> if A is away and hands off to B, and B is also away and hands off to C, the approval goes to C (up to 5 steps).</li>
 <li><strong>Loop:</strong> if the chain comes back (A to B to A), the admin's default substitute is used.</li>
 <li><strong>Segregation of duties:</strong> the substitute is never the requester of the issue. If no valid substitute exists, the approvers are left as they are and the audit log records why.</li>
-<li><strong>User and group fields:</strong> in user fields the absent person is replaced. In group fields the app only adds a notice, because changing a group would affect the whole site.</li>
-<li>Completed issues are never changed, and approvals are not handed back when the absence ends.</li>
+<li><strong>User fields:</strong> the absent person is replaced by the substitute (or the substitute is added next to them, if the admin chose so).</li>
+<li><strong>Group fields:</strong> by default the app only adds a notice, because changing a group would affect the whole site. With the Group approvals option on, the group is swapped for a cover group (see below).</li>
+<li><strong>What was handed over stays with the substitute:</strong> completed issues are never changed, and approvals are not handed back when the absence ends or is cancelled.</li>
+</ul>
+
+<h2>Group approvals (cover groups)</h2>
+<p>When an approval step uses a group and requires everyone in the group to approve, an absent member blocks the approval until they come back. With <strong>Settings &gt; Group approvals</strong> turned on, the app solves this without touching the original group:</p>
+<ol>
+<li>When someone in an approver group is away, the app creates a group named <code>ad-cobertura-&lt;group name&gt;</code> with the same members as the original group, without the absent person and with their substitute.</li>
+<li>Only on the open issues that use the original group, it swaps the original group for the cover group. The original group is never changed, so nobody gains or loses access anywhere else.</li>
+<li>A new group grants no project access and no license. It only serves the approval.</li>
+<li>There is one cover group per original group. If another member of the same group goes away, the app adjusts the members of the same cover group. Changes to the original group, including groups synced from an identity provider such as Active Directory, Entra or Okta, are reflected within an hour.</li>
+<li>The same rules apply: chain of substitutes, default substitute, and the substitute cannot be the requester. An absent member with nobody to cover stays in the cover group, and the approval waits for them, as before.</li>
+<li>Issues that were swapped keep the cover group until they are done, so no approval already given is lost.</li>
+<li>The hourly job deletes the cover group when nobody in the original group is away and no open issue has used it for two runs in a row.</li>
+</ol>
+<p><strong>Permission:</strong> creating groups and changing members needs a site admin. The app acts on behalf of the admin who turned the option on. The <strong>Test permission</strong> button creates a test group, adds and removes the admin and deletes the group, showing Jira's message if something fails.</p>
+<div class="warn"><strong>Do not delete a cover group by hand</strong> while an open issue uses it: the approval of that issue would point to a group that no longer exists. If it happens, the app creates the group again when needed and, when the issue is edited, puts the original group back on it.</div>
+
+<h2>Email the approver with Jira Automation</h2>
+<p>The app does not send emails itself, and Forge apps cannot add triggers to Jira Automation. So the app adds an <strong>action</strong>, <strong>Pending absence requests (Approval Delegation)</strong>, that returns every absence request still waiting for authorization. You use it in a scheduled rule, once or twice a day, as a reminder until the approver decides. Nothing is marked as delivered: if an email fails, the request comes back on the next run.</p>
+<h3>Recommended rule</h3>
+<ol>
+<li><strong>Trigger:</strong> Scheduled, once a day (for example 9 AM) or twice a day on weekdays with the cron expression <code>0 0 9,14 ? * MON-FRI</code>. Do not tick the JQL option.</li>
+<li><strong>Action:</strong> Pending absence requests (Approval Delegation).</li>
+<li><strong>Condition:</strong> If: smart values condition, <code>{{fetchedJiraAbsences.count}}</code> greater than <code>0</code>.</li>
+<li><strong>Branch:</strong> Advanced branching with the smart value <code>{{fetchedJiraAbsences.approverIds.split(",").distinct}}</code> and the variable name <code>approver</code>. The branch runs once for each approver who has requests waiting.</li>
+<li><strong>Inside the branch:</strong> Send customized email to <code>{{approver}}</code> (select the suggestion so it becomes a chip), with <strong>Send messages separately to each recipient</strong> ticked.</li>
+</ol>
+<p>We recommend a generic message, with no details of the requests: each approver gets one email, only if something is waiting for them, and nobody sees other people's absences. The details are in the portal, in the Approve delegation tab. The email content format can be HTML, so it can carry your company's layout.</p>
+<pre style="background:rgba(0,0,0,.25);border-radius:12px;padding:16px;overflow-x:auto;color:#cde9ff;font-size:.86rem;line-height:1.6">Subject: You have an absence request waiting for your authorization
+
+Hi!
+
+You have an absence request waiting for your authorization.
+
+To see the details and authorize or decline it, open the portal &gt;
+Out of office &gt; Approve delegation.
+
+You will get this reminder every day until the request is decided.</pre>
+<h3>Smart values</h3>
+<table>
+<tr><th>Smart value</th><th>What it returns</th></tr>
+<tr><td><code>{{fetchedJiraAbsences.count}}</code></td><td>How many requests are waiting</td></tr>
+<tr><td><code>{{fetchedJiraAbsences.userNames}}</code></td><td>Who will be away</td></tr>
+<tr><td><code>{{fetchedJiraAbsences.delegateNames}}</code></td><td>The substitutes</td></tr>
+<tr><td><code>{{fetchedJiraAbsences.approverNames}}</code></td><td>Who must authorize</td></tr>
+<tr><td><code>{{fetchedJiraAbsences.approverIds}}</code></td><td>Account IDs of who must authorize</td></tr>
+<tr><td><code>{{fetchedJiraAbsences.startDates}}</code></td><td>Start dates (YYYY-MM-DD)</td></tr>
+<tr><td><code>{{fetchedJiraAbsences.endDates}}</code></td><td>End dates (YYYY-MM-DD)</td></tr>
+<tr><td><code>{{fetchedJiraAbsences.reasons}}</code></td><td>Reason: vacation, leave or other</td></tr>
+<tr><td><code>{{fetchedJiraAbsences.notes}}</code></td><td>Note written by the requester</td></tr>
+<tr><td><code>{{fetchedJiraAbsences.summary}}</code></td><td>One line per request: who, period, substitute, who must authorize and note</td></tr>
+</table>
+<ul>
+<li>Lists are comma separated and follow the same order: the first name in <code>userNames</code> matches the first in <code>delegateNames</code>, <code>startDates</code> and so on.</li>
+<li>In <code>notes</code>, a comma inside a note becomes <code>;</code> and an empty note becomes <code>-</code>, so positions keep matching.</li>
+<li>The lists bring the requests of every approver, not only the one in the branch. That is why the generic message is recommended.</li>
+<li>To show a list one item per line: <code>{{fetchedJiraAbsences.userNames.split(",").join("&lt;br&gt;")}}</code>. For the summary in an HTML email: <code>{{fetchedJiraAbsences.summary.replace("\n","&lt;br&gt;")}}</code>.</li>
+<li>In the Send customized email body, insert smart values with the <strong>{ }</strong> button of the editor. Typed or pasted text is sent as plain text.</li>
+<li>When nothing is waiting, <code>count</code> is 0 and the other values are empty, so keep the condition before the email.</li>
+<li>Each rule run uses your site's Automation allowance. Once or twice a day is enough.</li>
 </ul>
 
 <h2>Who can use each part</h2>
@@ -148,22 +223,25 @@ Issue panel and audit log show what happened and why</pre>
 <tr><th>User</th><th>Access</th></tr>
 <tr><td>Anyone with access to the JSM portal (agents and customers)</td><td>Add, edit and cancel their own absences</td></tr>
 <tr><td>People on the absence approvers list (licensed users)</td><td>Approve delegation tab in the portal, for absences that chose them</td></tr>
-<tr><td>Jira administrators (Administer Jira)</td><td>Settings, absence approvers list and audit log</td></tr>
+<tr><td>Jira administrators (Administer Jira)</td><td>Settings, absence approvers list, Absences tab (adjust and cancel any absence) and audit log</td></tr>
+<tr><td>Site administrators</td><td>Turn on Group approvals (the app creates cover groups on their behalf)</td></tr>
 <tr><td>Agents</td><td>Issue panel, on issues they can already see</td></tr>
+<tr><td>Automation rule authors</td><td>The Pending absence requests action</td></tr>
 </table>
 
 <h2>What the app never does</h2>
 <ul>
 <li>Never approves or declines a request on anyone's behalf.</li>
-<li>Never changes workflows, approval steps, groups or project settings.</li>
+<li>Never changes workflows, approval steps or project settings.</li>
+<li>Never changes existing groups. With Group approvals on, it only creates, adjusts and deletes its own <code>ad-cobertura-</code> groups.</li>
 <li>Never lets someone authorize their own absence, or be the substitute and the authorizer at the same time.</li>
 <li>Never sends data outside Atlassian.</li>
 </ul>
 
-<div class="warn"><strong>Known limitations:</strong> the app does not send emails, so the person needs to let whoever authorizes the absence know. The approver field must be on the issue type's edit screen. In group fields the app only adds a notice. Approvers coming from Assets fields are not handled yet.</div>
+<div class="warn"><strong>Known limitations:</strong> the app does not send emails itself; use the Automation action above. The approver field must be on the issue type's edit screen. Without the Group approvals option, group fields only get a notice, so a step where everyone in the group must approve waits for the absent person; in that case turn the option on or use the user field (Approvers) with the people listed one by one. Some organizations that sync users from an identity provider block creating groups outside it; then the cover group cannot be created, the issue keeps the notice and the error goes to the audit log. Approvers coming from Assets fields are not handled yet.</div>
 
 <h2>Languages</h2>
-<p>Portuguese (Brazil), English (US).</p>
+<p>Portuguese (Brazil), English (US). Each person sees the app in their own Jira language.</p>
 
 <h2>Support</h2>
 <p>Email <a href="mailto:support@app-rl.com" style="color:#79E2F2">support@app-rl.com</a>.</p>
@@ -182,31 +260,106 @@ Issue panel and audit log show what happened and why</pre>
 Approval Delegation (app Forge, roda dentro da infraestrutura da Atlassian)
   |  (2) Aprovador de ausência autoriza no portal (configuração opcional)
   |  (3) Escuta os eventos das issues e roda um job de hora em hora
-  |--> Jira REST API v3 (issues, campos de aprovadores, JQL, usuários, grupos)
+  |--> Jira REST API v3 (issues, campos de aprovadores, usuários, grupos)
   |--> Armazenamento do Forge (ausências, auditoria, configurações)
   v
-Campos de aprovadores atualizados: ausente trocado pelo substituto
-Painel na issue e auditoria mostram o que aconteceu e por quê</pre>
+Campos de usuário: ausente trocado pelo substituto
+Campos de grupo: aviso, ou grupo de cobertura (configuração opcional)
+Painel na issue e auditoria mostram o que aconteceu e por quê
+  |
+  v
+Jira Automation (opcional): a ação do app lista os pedidos pendentes
+pra uma regra agendada mandar e-mail pros aprovadores</pre>
 
 <h2>As telas</h2>
 <h3>Portal: Fora do escritório</h3>
-<p>Fica no menu do perfil do portal, pra todo mundo, agente ou cliente. Em <strong>Minhas ausências</strong> a pessoa informa o motivo (férias, licença ou outro), a data inicial e a final, quem vai substituí-la e, quando a autorização está ligada, quem vai autorizar. Cada ausência mostra o status, quem autorizou ou recusou e quantas aprovações já foram pro substituto.</p>
+<p>Fica no menu do perfil do portal, pra todo mundo, agente ou cliente. Em <strong>Minhas ausências</strong> a pessoa informa o motivo (férias, licença ou outro), a data inicial e a final, quem vai substituí-la e, quando a autorização está ligada, quem vai autorizar, além de uma observação opcional. O substituto pode ser qualquer pessoa do site, agente ou cliente: é só digitar pelo menos 2 letras do nome. Cada ausência mostra o status, quem autorizou ou recusou e quantas aprovações já foram pro substituto. Dá pra editar ou cancelar enquanto a ausência está aguardando, agendada ou ativa. Se o substituto escolhido também estiver fora no mesmo período, o portal avisa na hora.</p>
 <h3>Portal: Aprovar delegação</h3>
-<p>Só quem está na lista de aprovadores de ausência vê essa aba. Ela mostra só as ausências que esperam a decisão daquela pessoa, avisa quando a ausência já começou e permite autorizar ou recusar com comentário.</p>
+<p>Só quem está na lista de aprovadores de ausência vê essa aba. Ela mostra só as ausências que esperam a decisão daquela pessoa, avisa quando a ausência já começou e permite autorizar ou recusar com comentário. Se ninguém decidir até a data final, o pedido expira.</p>
 <h3>Configurações do Jira: Configurações</h3>
-<p>O admin do Jira liga ou desliga a delegação automática, exige autorização das ausências e cuida da lista de aprovadores de ausência, escolhe os projetos de serviço e os campos de aprovadores usados nos workflows, define um substituto padrão e decide se o ausente fica junto com o substituto.</p>
+<ul>
+<li><strong>Geral:</strong> liga ou desliga a delegação automática (as ausências continuam salvas quando ela está desligada) e define se as ausências precisam de autorização.</li>
+<li><strong>Aprovadores de ausência:</strong> a lista de usuários licenciados que podem autorizar ausências, com quantos pedidos estão esperando cada um. No portal, a pessoa escolhe um desses nomes.</li>
+<li><strong>Onde o app atua:</strong> os projetos de serviço (vazio vale pra todos) e os campos de aprovadores usados nos seus workflows. Dá pra escolher qualquer campo de usuário ou de grupo, inclusive o Approvers e o Approver groups do JSM.</li>
+<li><strong>Quando não dá pra delegar:</strong> um substituto padrão, usado quando a cadeia de substitutos dá volta ou termina sem ninguém disponível.</li>
+<li><strong>Avançado:</strong> manter o ausente junto com o substituto, em vez de trocar. Só pra etapas de aprovação que pedem 1 aprovação: se a etapa pede todos, manter o ausente trava a aprovação.</li>
+<li><strong>Aprovação por grupo:</strong> cobre as aprovações feitas por grupo enquanto alguém do grupo está fora. Veja a seção abaixo.</li>
+</ul>
+<h3>Configurações do Jira: Ausências</h3>
+<p>Todas as ausências cadastradas no portal, com filtro por status (em aberto, aguardando, agendadas, ativas, encerradas, recusadas ou expiradas, canceladas, todas) e por pessoa. Cada ausência mostra o motivo, o substituto, quem autoriza, quando foi cadastrada, a observação do pedido, a decisão com o comentário e as issues que já foram pro substituto. Um admin do Jira pode <strong>ajustar</strong> datas, substituto, motivo e observação, ou <strong>cancelar</strong> uma ausência aguardando, agendada ou ativa. O ajuste não muda a autorização: pedido aguardando continua aguardando, e ausência autorizada continua valendo. Tudo vai pra auditoria com o nome do admin.</p>
 <h3>Configurações do Jira: Auditoria</h3>
-<p>Toda ausência, autorização, delegação, delegação bloqueada e mudança de configuração, com filtro por tipo e por pessoa e link pra issue.</p>
+<p>Toda ausência, autorização, delegação, delegação bloqueada, aviso de grupo, mudança de grupo de cobertura e mudança de configuração, com filtro por tipo (ausências, delegações nas issues, configurações) e por pessoa, e link pra issue.</p>
 <h3>Painel na issue</h3>
-<p>Nas issues de projetos de serviço, um painel lateral mostra de quem pra quem a aprovação passou, até quando a pessoa está fora e quem autorizou a ausência.</p>
+<p>Nas issues de projetos de serviço, um painel lateral mostra de quem pra quem a aprovação passou, até quando a pessoa está fora, quem autorizou a ausência, os avisos de grupo e as trocas pelo grupo de cobertura.</p>
 
 <h2>Regras de delegação</h2>
 <ul>
+<li><strong>Quando acontece:</strong> na hora em que uma ausência que já começou é autorizada, toda vez que uma issue é criada ou editada durante a ausência, e no job de hora em hora, que também pega as ausências que começam numa data futura.</li>
 <li><strong>Cadeia:</strong> se A está fora e passa pra B, e B também está fora e passa pra C, a aprovação vai pra C (até 5 passos).</li>
 <li><strong>Loop:</strong> se a cadeia volta (A pra B pra A), vale o substituto padrão do admin.</li>
 <li><strong>Segregação de funções:</strong> o substituto nunca é o solicitante da issue. Se não houver substituto válido, os aprovadores ficam como estão e a auditoria registra o motivo.</li>
-<li><strong>Campos de usuário e de grupo:</strong> em campo de usuário o ausente é trocado. Em campo de grupo o app só registra um aviso, porque mexer no grupo afetaria o site inteiro.</li>
-<li>Issues concluídas nunca são alteradas, e as aprovações não voltam pro titular quando a ausência termina.</li>
+<li><strong>Campos de usuário:</strong> o ausente é trocado pelo substituto (ou o substituto entra junto com ele, se o admin escolheu assim).</li>
+<li><strong>Campos de grupo:</strong> por padrão o app só registra um aviso, porque mexer no grupo afetaria o site inteiro. Com a opção Aprovação por grupo ligada, o grupo é trocado por um grupo de cobertura (veja abaixo).</li>
+<li><strong>O que foi passado fica com o substituto:</strong> issues concluídas nunca são alteradas, e as aprovações não voltam pro titular quando a ausência termina ou é cancelada.</li>
+</ul>
+
+<h2>Aprovação por grupo (grupo de cobertura)</h2>
+<p>Quando a etapa de aprovação usa um grupo e exige que todos do grupo aprovem, um membro ausente trava a aprovação até voltar. Com <strong>Configurações &gt; Aprovação por grupo</strong> ligada, o app resolve isso sem mexer no grupo original:</p>
+<ol>
+<li>Quando alguém de um grupo aprovador está fora, o app cria um grupo chamado <code>ad-cobertura-&lt;nome do grupo&gt;</code>, com os mesmos membros do grupo original, sem o ausente e com o substituto dele.</li>
+<li>Só nas issues abertas que usam o grupo original, ele troca o grupo original pelo grupo de cobertura. O grupo original nunca é alterado, então ninguém ganha nem perde acesso em nenhum outro lugar.</li>
+<li>Um grupo novo não dá acesso a projeto nem consome licença. Ele só serve pra aprovação.</li>
+<li>É um grupo de cobertura por grupo original. Se outra pessoa do mesmo grupo sair, o app ajusta os membros do mesmo grupo de cobertura. Mudanças no grupo original, inclusive grupos sincronizados do provedor de identidade (Active Directory, Entra, Okta), são refletidas em até 1 hora.</li>
+<li>Valem as mesmas regras: cadeia de substitutos, substituto padrão, e o substituto não pode ser o solicitante. Ausente sem ninguém pra cobrir continua no grupo de cobertura, e a aprovação espera por ele, como antes.</li>
+<li>As issues trocadas ficam com o grupo de cobertura até terminar, pra não perder aprovação já dada.</li>
+<li>O job de hora em hora apaga o grupo de cobertura quando ninguém do grupo original está fora e nenhuma issue aberta usa ele por duas rodadas seguidas.</li>
+</ol>
+<p><strong>Permissão:</strong> criar grupo e mexer em membros exige administrador do site. O app age em nome do admin que ligou a opção. O botão <strong>Testar permissão</strong> cria um grupo de teste, coloca e tira o admin e apaga o grupo, mostrando a mensagem do Jira se algo falhar.</p>
+<div class="warn"><strong>Não apague um grupo de cobertura na mão</strong> enquanto alguma issue aberta usar ele: a aprovação daquela issue passaria a apontar pra um grupo que não existe mais. Se acontecer, o app cria o grupo de novo quando precisar e, quando a issue for editada, devolve o grupo original nela.</div>
+
+<h2>Avisar o aprovador por e-mail com o Jira Automation</h2>
+<p>O app não manda e-mail sozinho, e apps Forge não conseguem criar gatilhos no Jira Automation. Por isso o app traz uma <strong>ação</strong>, a <strong>Pending absence requests (Approval Delegation)</strong>, que devolve todos os pedidos de ausência que ainda aguardam autorização. Você usa ela numa regra agendada, 1 ou 2 vezes por dia, como lembrete até o aprovador decidir. Nada é marcado como entregue: se um e-mail falhar, o pedido volta na próxima rodada.</p>
+<h3>Regra recomendada</h3>
+<ol>
+<li><strong>Gatilho:</strong> Scheduled, 1 vez por dia (por exemplo às 9h) ou 2 vezes por dia nos dias úteis, com a expressão cron <code>0 0 9,14 ? * MON-FRI</code>. Não marque a opção de JQL.</li>
+<li><strong>Ação:</strong> Pending absence requests (Approval Delegation).</li>
+<li><strong>Condição:</strong> If: smart values condition, <code>{{fetchedJiraAbsences.count}}</code> maior que <code>0</code>.</li>
+<li><strong>Ramo:</strong> Advanced branching com o smart value <code>{{fetchedJiraAbsences.approverIds.split(",").distinct}}</code> e o nome de variável <code>aprovador</code>. O ramo roda uma vez pra cada aprovador que tem pedido esperando.</li>
+<li><strong>Dentro do ramo:</strong> Send customized email pra <code>{{aprovador}}</code> (clique na sugestão pra virar chip), com <strong>Send messages separately to each recipient</strong> marcado.</li>
+</ol>
+<p>A gente recomenda uma mensagem genérica, sem os detalhes dos pedidos: cada aprovador recebe um e-mail só, apenas se tiver algo esperando por ele, e ninguém vê a ausência dos outros. Os detalhes ficam no portal, na aba Aprovar delegação. O conteúdo do e-mail pode ser em HTML, então dá pra usar o layout da sua empresa.</p>
+<pre style="background:rgba(0,0,0,.25);border-radius:12px;padding:16px;overflow-x:auto;color:#cde9ff;font-size:.86rem;line-height:1.6">Assunto: Você tem pedido de ausência aguardando sua autorização
+
+Olá!
+
+Você tem pedido de ausência aguardando a sua autorização.
+
+Para ver os detalhes e autorizar ou recusar, acesse o portal &gt;
+Fora do escritório &gt; Aprovar delegação.
+
+Enquanto o pedido não for decidido, você vai receber este lembrete todos os dias.</pre>
+<h3>Smart values</h3>
+<table>
+<tr><th>Smart value</th><th>O que traz</th></tr>
+<tr><td><code>{{fetchedJiraAbsences.count}}</code></td><td>Quantos pedidos estão aguardando</td></tr>
+<tr><td><code>{{fetchedJiraAbsences.userNames}}</code></td><td>Quem vai ficar fora</td></tr>
+<tr><td><code>{{fetchedJiraAbsences.delegateNames}}</code></td><td>Os substitutos</td></tr>
+<tr><td><code>{{fetchedJiraAbsences.approverNames}}</code></td><td>Quem precisa autorizar</td></tr>
+<tr><td><code>{{fetchedJiraAbsences.approverIds}}</code></td><td>Account IDs de quem precisa autorizar</td></tr>
+<tr><td><code>{{fetchedJiraAbsences.startDates}}</code></td><td>Datas iniciais (AAAA-MM-DD)</td></tr>
+<tr><td><code>{{fetchedJiraAbsences.endDates}}</code></td><td>Datas finais (AAAA-MM-DD)</td></tr>
+<tr><td><code>{{fetchedJiraAbsences.reasons}}</code></td><td>Motivo: vacation (férias), leave (licença) ou other (outro)</td></tr>
+<tr><td><code>{{fetchedJiraAbsences.notes}}</code></td><td>Observação escrita pelo solicitante</td></tr>
+<tr><td><code>{{fetchedJiraAbsences.summary}}</code></td><td>Uma linha por pedido: quem, período, substituto, quem precisa autorizar e observação</td></tr>
+</table>
+<ul>
+<li>As listas são separadas por vírgula e seguem a mesma ordem: o primeiro nome de <code>userNames</code> corresponde ao primeiro de <code>delegateNames</code>, <code>startDates</code> e assim por diante.</li>
+<li>Em <code>notes</code>, vírgula dentro da observação vira <code>;</code> e observação vazia vira <code>-</code>, pra posição continuar batendo.</li>
+<li>As listas trazem os pedidos de todos os aprovadores, não só do que está no ramo. Por isso a mensagem genérica é a recomendada.</li>
+<li>Pra mostrar uma lista com um item por linha: <code>{{fetchedJiraAbsences.userNames.split(",").join("&lt;br&gt;")}}</code>. Pro resumo num e-mail em HTML: <code>{{fetchedJiraAbsences.summary.replace("\n","&lt;br&gt;")}}</code>.</li>
+<li>No corpo do Send customized email, insira os smart values pelo botão <strong>{ }</strong> do editor. Texto digitado ou colado vai como texto comum.</li>
+<li>Quando não há nada aguardando, o <code>count</code> vem 0 e os outros valores vêm vazios, então mantenha a condição antes do e-mail.</li>
+<li>Cada execução da regra consome a cota de Automation do seu site. 1 ou 2 vezes por dia é suficiente.</li>
 </ul>
 
 <h2>Quem pode usar cada parte</h2>
@@ -214,22 +367,25 @@ Painel na issue e auditoria mostram o que aconteceu e por quê</pre>
 <tr><th>Usuário</th><th>Acesso</th></tr>
 <tr><td>Quem acessa o portal do JSM (agentes e clientes)</td><td>Cadastrar, editar e cancelar as próprias ausências</td></tr>
 <tr><td>Quem está na lista de aprovadores de ausência (usuários licenciados)</td><td>Aba Aprovar delegação no portal, para as ausências que escolheram essa pessoa</td></tr>
-<tr><td>Administradores do Jira (Administer Jira)</td><td>Configurações, lista de aprovadores de ausência e auditoria</td></tr>
+<tr><td>Administradores do Jira (Administer Jira)</td><td>Configurações, lista de aprovadores de ausência, aba Ausências (ajustar e cancelar qualquer ausência) e auditoria</td></tr>
+<tr><td>Administradores do site</td><td>Ligar a Aprovação por grupo (o app cria os grupos de cobertura em nome deles)</td></tr>
 <tr><td>Agentes</td><td>Painel na issue, nas issues que eles já conseguem ver</td></tr>
+<tr><td>Quem cria regras de Automation</td><td>A ação Pending absence requests</td></tr>
 </table>
 
 <h2>O que o app nunca faz</h2>
 <ul>
 <li>Nunca aprova nem recusa um chamado no lugar de ninguém.</li>
-<li>Nunca altera workflows, passos de aprovação, grupos ou configurações de projeto.</li>
+<li>Nunca altera workflows, passos de aprovação ou configurações de projeto.</li>
+<li>Nunca altera grupos que já existem. Com a Aprovação por grupo ligada, ele só cria, ajusta e apaga os próprios grupos <code>ad-cobertura-</code>.</li>
 <li>Nunca deixa alguém autorizar a própria ausência, nem ser substituto e autorizador ao mesmo tempo.</li>
 <li>Nunca envia dados para fora da Atlassian.</li>
 </ul>
 
-<div class="warn"><strong>Limitações conhecidas:</strong> o app não manda e-mail, então a pessoa precisa avisar quem vai autorizar a ausência. O campo de aprovadores precisa estar na tela de edição do tipo de issue. Em campos de grupo o app só registra um aviso. Aprovadores vindos de campos do Assets ainda não são tratados.</div>
+<div class="warn"><strong>Limitações conhecidas:</strong> o app não manda e-mail sozinho; use a ação de Automation acima. O campo de aprovadores precisa estar na tela de edição do tipo de issue. Sem a opção Aprovação por grupo, campos de grupo só recebem um aviso, então uma etapa em que todos do grupo precisam aprovar espera o ausente voltar; nesse caso, ligue a opção ou use o campo de usuários (Approvers) com as pessoas listadas uma a uma. Algumas empresas que sincronizam usuários pelo provedor de identidade bloqueiam a criação de grupos fora dele; aí o grupo de cobertura não é criado, a issue fica com o aviso e o erro vai pra auditoria. Aprovadores vindos de campos do Assets ainda não são tratados.</div>
 
 <h2>Idiomas</h2>
-<p>Português (Brasil), Inglês (EUA).</p>
+<p>Português (Brasil), Inglês (EUA). Cada pessoa vê o app no idioma do próprio Jira.</p>
 
 <h2>Suporte</h2>
 <p>E-mail <a href="mailto:support@app-rl.com" style="color:#79E2F2">support@app-rl.com</a>.</p>
