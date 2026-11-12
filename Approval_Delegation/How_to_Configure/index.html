@@ -138,13 +138,15 @@ so a scheduled rule can email the approvers</pre>
 <li><strong>Absence approvers:</strong> the list of licensed users who can authorize absences, with how many requests are waiting for each one. People pick one of these names in the portal.</li>
 <li><strong>Where the app works:</strong> the service projects (empty means all) and the approver fields used in your workflows. Any user or group field can be chosen, including the JSM Approvers and Approver groups fields.</li>
 <li><strong>When delegation is not possible:</strong> a default substitute, used when the chain of substitutes loops or ends with nobody available.</li>
-<li><strong>Advanced:</strong> keep the absent person next to the substitute instead of replacing them. Only for approval steps that need 1 approval: if the step needs everyone, keeping the absent person blocks the approval.</li>
+<li><strong>Advanced:</strong> keep the absent person next to the substitute instead of replacing them (only for approval steps that need 1 approval: if the step needs everyone, keeping the absent person blocks the approval), and how long to keep the audit log and closed absences: no limit, 6, 12 or 24 months.</li>
 <li><strong>Group approvals:</strong> cover approvals made by a group while one of its members is away. See the section below.</li>
 </ul>
 <h3>Jira settings: Absences</h3>
 <p>Every absence registered in the portal, with filters by status (open, waiting, scheduled, active, ended, declined or expired, cancelled, all) and by person. Each absence shows the reason, substitute, who authorizes, when it was added, the request note, the decision with its comment, and the issues already handed to the substitute. A Jira admin can <strong>adjust</strong> dates, substitute, reason and note, or <strong>cancel</strong> an absence that is waiting, scheduled or active. Adjusting does not change the authorization: a waiting request stays waiting and an authorized absence stays authorized. Everything goes to the audit log with the admin's name.</p>
 <h3>Jira settings: Audit log</h3>
-<p>Every absence, authorization, delegation, blocked delegation, group notice, cover group change and settings change, with filters by type (absences, delegations on issues, settings) and by person, and a link to the issue.</p>
+<p>Every absence, authorization, delegation, blocked delegation, group notice, cover group change, retention cleanup and settings change, with filters by type (absences, delegations on issues, settings) and by person, and a link to the issue.</p>
+<h3>Retention</h3>
+<p>By default nothing is deleted while the app is installed. When the admin picks a retention period in Settings &gt; Advanced, the hourly job gradually deletes audit log entries and absences that ended, were declined, expired or were cancelled once they are older than that period. Waiting, scheduled and active absences are never deleted, and each cleanup is recorded in the audit log with how much was removed.</p>
 <h3>Issue panel</h3>
 <p>On service desk issues, a side panel shows who the approval moved from and to, until when the person is away, who authorized the absence, group notices and cover group swaps.</p>
 
@@ -175,14 +177,26 @@ so a scheduled rule can email the approvers</pre>
 
 <h2>Email the approver with Jira Automation</h2>
 <p>The app does not send emails itself, and Forge apps cannot add triggers to Jira Automation. So the app adds an <strong>action</strong>, <strong>Pending absence requests (Approval Delegation)</strong>, that returns every absence request still waiting for authorization. You use it in a scheduled rule, once or twice a day, as a reminder until the approver decides. Nothing is marked as delivered: if an email fails, the request comes back on the next run.</p>
-<h3>Recommended rule</h3>
+<h3>Step by step: create the rule that notifies the approver</h3>
+<p>You need to be a Jira admin to create a global rule. Allow 15 to 20 minutes after the app is installed or updated for the action to show up in Automation.</p>
 <ol>
-<li><strong>Trigger:</strong> Scheduled, once a day (for example 9 AM) or twice a day on weekdays with the cron expression <code>0 0 9,14 ? * MON-FRI</code>. Do not tick the JQL option.</li>
-<li><strong>Action:</strong> Pending absence requests (Approval Delegation).</li>
-<li><strong>Condition:</strong> If: smart values condition, <code>{{fetchedJiraAbsences.count}}</code> greater than <code>0</code>.</li>
-<li><strong>Branch:</strong> Advanced branching with the smart value <code>{{fetchedJiraAbsences.approverIds.split(",").distinct}}</code> and the variable name <code>approver</code>. The branch runs once for each approver who has requests waiting.</li>
-<li><strong>Inside the branch:</strong> Send customized email to <code>{{approver}}</code> (select the suggestion so it becomes a chip), with <strong>Send messages separately to each recipient</strong> ticked.</li>
+<li>In Jira, go to <strong>Settings (gear) &gt; System &gt; Global automation</strong> and click <strong>Create rule</strong>.</li>
+<li><strong>Trigger:</strong> choose <strong>Scheduled</strong>. Pick a time once a day (for example every day at 9 AM) or, for twice a day on weekdays, use the cron expression <code>0 0 9,14 ? * MON-FRI</code>. Leave the JQL option unticked: the rule does not need an issue.</li>
+<li><strong>Action:</strong> click <strong>+ &gt; THEN: Add an action</strong>, search for <strong>Pending absence requests</strong> (it is under Other apps) and add <strong>Pending absence requests (Approval Delegation)</strong>. There is nothing to configure: click <strong>Next</strong>.</li>
+<li><strong>Condition:</strong> click <strong>+ &gt; IF: Add a condition &gt; Smart values condition</strong>. First value <code>{{fetchedJiraAbsences.count}}</code>, condition <strong>greater than</strong>, second value <code>0</code>. This way the rule stops when nothing is waiting.</li>
+<li><strong>Branch:</strong> click <strong>+ &gt; FOR EACH: Branch rule / related work items &gt; Advanced branching</strong>. Smart value <code>{{fetchedJiraAbsences.approverIds.split(",").distinct}}</code> and variable name <code>approver</code>. The branch runs once for each approver who has requests waiting.</li>
+<li><strong>Email, inside the branch:</strong> click the <strong>+</strong> inside the branch, choose <strong>Send customized email</strong> and fill in:
+<ul>
+<li><strong>Email name:</strong> any name, for example "Notify absence approver".</li>
+<li><strong>Recipient(s):</strong> type <code>{{approver}}</code> and click the suggestion so it becomes a chip. If you only type it, Automation does not recognize it.</li>
+<li>Tick <strong>Send messages separately to each recipient</strong>.</li>
+<li><strong>From:</strong> pick an address from the list (for example the site's default <code>jira@&lt;site&gt;.atlassian.net</code>). Do not type a new one.</li>
+<li><strong>Subject</strong> and <strong>Content:</strong> see the suggested message below. The content format can be plain text, rich text or HTML.</li>
+</ul></li>
+<li>Give the rule a name, for example "Remind absence approvers", and click <strong>Turn on rule</strong>.</li>
+<li><strong>Test it:</strong> make sure there is at least one request waiting for authorization in the portal, click <strong>Run rule</strong> and open the rule's <strong>Audit log</strong>. The email step must be green, and the approver should get the email in a few minutes. Also check spam and quarantine.</li>
 </ol>
+<h3>Suggested message</h3>
 <p>We recommend a generic message, with no details of the requests: each approver gets one email, only if something is waiting for them, and nobody sees other people's absences. The details are in the portal, in the Approve delegation tab. The email content format can be HTML, so it can carry your company's layout.</p>
 <pre style="background:rgba(0,0,0,.25);border-radius:12px;padding:16px;overflow-x:auto;color:#cde9ff;font-size:.86rem;line-height:1.6">Subject: You have an absence request waiting for your authorization
 
@@ -238,7 +252,7 @@ You will get this reminder every day until the request is decided.</pre>
 <li>Never sends data outside Atlassian.</li>
 </ul>
 
-<div class="warn"><strong>Known limitations:</strong> the app does not send emails itself; use the Automation action above. The approver field must be on the issue type's edit screen. Without the Group approvals option, group fields only get a notice, so a step where everyone in the group must approve waits for the absent person; in that case turn the option on or use the user field (Approvers) with the people listed one by one. Some organizations that sync users from an identity provider block creating groups outside it; then the cover group cannot be created, the issue keeps the notice and the error goes to the audit log. Approvers coming from Assets fields are not handled yet.</div>
+<div class="warn"><strong>Known limitations:</strong> the app does not send emails by itself: to notify the approver, create the Automation rule described above. The approver field must be on the issue type's edit screen. Without the Group approvals option, group fields only get a notice, so a step where everyone in the group must approve waits for the absent person; in that case turn the option on or use the user field (Approvers) with the people listed one by one. Some organizations that sync users from an identity provider block creating groups outside it; then the cover group cannot be created, the issue keeps the notice and the error goes to the audit log. Approvers coming from Assets fields are not handled yet.</div>
 
 <h2>Languages</h2>
 <p>Portuguese (Brazil), English (US). Each person sees the app in their own Jira language.</p>
@@ -282,13 +296,15 @@ pra uma regra agendada mandar e-mail pros aprovadores</pre>
 <li><strong>Aprovadores de ausência:</strong> a lista de usuários licenciados que podem autorizar ausências, com quantos pedidos estão esperando cada um. No portal, a pessoa escolhe um desses nomes.</li>
 <li><strong>Onde o app atua:</strong> os projetos de serviço (vazio vale pra todos) e os campos de aprovadores usados nos seus workflows. Dá pra escolher qualquer campo de usuário ou de grupo, inclusive o Approvers e o Approver groups do JSM.</li>
 <li><strong>Quando não dá pra delegar:</strong> um substituto padrão, usado quando a cadeia de substitutos dá volta ou termina sem ninguém disponível.</li>
-<li><strong>Avançado:</strong> manter o ausente junto com o substituto, em vez de trocar. Só pra etapas de aprovação que pedem 1 aprovação: se a etapa pede todos, manter o ausente trava a aprovação.</li>
+<li><strong>Avançado:</strong> manter o ausente junto com o substituto, em vez de trocar (só pra etapas de aprovação que pedem 1 aprovação: se a etapa pede todos, manter o ausente trava a aprovação), e por quanto tempo guardar a auditoria e as ausências encerradas: sem limite, 6, 12 ou 24 meses.</li>
 <li><strong>Aprovação por grupo:</strong> cobre as aprovações feitas por grupo enquanto alguém do grupo está fora. Veja a seção abaixo.</li>
 </ul>
 <h3>Configurações do Jira: Ausências</h3>
 <p>Todas as ausências cadastradas no portal, com filtro por status (em aberto, aguardando, agendadas, ativas, encerradas, recusadas ou expiradas, canceladas, todas) e por pessoa. Cada ausência mostra o motivo, o substituto, quem autoriza, quando foi cadastrada, a observação do pedido, a decisão com o comentário e as issues que já foram pro substituto. Um admin do Jira pode <strong>ajustar</strong> datas, substituto, motivo e observação, ou <strong>cancelar</strong> uma ausência aguardando, agendada ou ativa. O ajuste não muda a autorização: pedido aguardando continua aguardando, e ausência autorizada continua valendo. Tudo vai pra auditoria com o nome do admin.</p>
 <h3>Configurações do Jira: Auditoria</h3>
-<p>Toda ausência, autorização, delegação, delegação bloqueada, aviso de grupo, mudança de grupo de cobertura e mudança de configuração, com filtro por tipo (ausências, delegações nas issues, configurações) e por pessoa, e link pra issue.</p>
+<p>Toda ausência, autorização, delegação, delegação bloqueada, aviso de grupo, mudança de grupo de cobertura, limpeza por retenção e mudança de configuração, com filtro por tipo (ausências, delegações nas issues, configurações) e por pessoa, e link pra issue.</p>
+<h3>Retenção</h3>
+<p>Por padrão nada é apagado enquanto o app estiver instalado. Quando o admin escolhe um prazo em Configurações &gt; Avançado, o job de hora em hora apaga aos poucos as linhas da auditoria e as ausências encerradas, recusadas, expiradas ou canceladas que passaram desse prazo. Ausências aguardando, agendadas ou ativas nunca são apagadas, e cada limpeza fica registrada na auditoria com quanto saiu.</p>
 <h3>Painel na issue</h3>
 <p>Nas issues de projetos de serviço, um painel lateral mostra de quem pra quem a aprovação passou, até quando a pessoa está fora, quem autorizou a ausência, os avisos de grupo e as trocas pelo grupo de cobertura.</p>
 
@@ -319,14 +335,26 @@ pra uma regra agendada mandar e-mail pros aprovadores</pre>
 
 <h2>Avisar o aprovador por e-mail com o Jira Automation</h2>
 <p>O app não manda e-mail sozinho, e apps Forge não conseguem criar gatilhos no Jira Automation. Por isso o app traz uma <strong>ação</strong>, a <strong>Pending absence requests (Approval Delegation)</strong>, que devolve todos os pedidos de ausência que ainda aguardam autorização. Você usa ela numa regra agendada, 1 ou 2 vezes por dia, como lembrete até o aprovador decidir. Nada é marcado como entregue: se um e-mail falhar, o pedido volta na próxima rodada.</p>
-<h3>Regra recomendada</h3>
+<h3>Passo a passo: criar a regra que avisa o aprovador</h3>
+<p>Pra criar uma regra global, você precisa ser admin do Jira. Depois de instalar ou atualizar o app, espere uns 15 a 20 minutos pra ação aparecer no Automation.</p>
 <ol>
-<li><strong>Gatilho:</strong> Scheduled, 1 vez por dia (por exemplo às 9h) ou 2 vezes por dia nos dias úteis, com a expressão cron <code>0 0 9,14 ? * MON-FRI</code>. Não marque a opção de JQL.</li>
-<li><strong>Ação:</strong> Pending absence requests (Approval Delegation).</li>
-<li><strong>Condição:</strong> If: smart values condition, <code>{{fetchedJiraAbsences.count}}</code> maior que <code>0</code>.</li>
-<li><strong>Ramo:</strong> Advanced branching com o smart value <code>{{fetchedJiraAbsences.approverIds.split(",").distinct}}</code> e o nome de variável <code>aprovador</code>. O ramo roda uma vez pra cada aprovador que tem pedido esperando.</li>
-<li><strong>Dentro do ramo:</strong> Send customized email pra <code>{{aprovador}}</code> (clique na sugestão pra virar chip), com <strong>Send messages separately to each recipient</strong> marcado.</li>
+<li>No Jira, abra <strong>Configurações (engrenagem) &gt; Sistema &gt; Automação global</strong> e clique em <strong>Criar regra</strong>.</li>
+<li><strong>Gatilho:</strong> escolha <strong>Scheduled</strong>. Defina um horário 1 vez por dia (por exemplo todo dia às 9h) ou, pra 2 vezes por dia nos dias úteis, use a expressão cron <code>0 0 9,14 ? * MON-FRI</code>. Deixe a opção de JQL desmarcada: a regra não precisa de issue.</li>
+<li><strong>Ação:</strong> clique em <strong>+ &gt; THEN: Add an action</strong>, procure por <strong>Pending absence requests</strong> (fica em Other apps) e adicione a <strong>Pending absence requests (Approval Delegation)</strong>. Não tem nada pra configurar: clique em <strong>Next</strong>.</li>
+<li><strong>Condição:</strong> clique em <strong>+ &gt; IF: Add a condition &gt; Smart values condition</strong>. Primeiro valor <code>{{fetchedJiraAbsences.count}}</code>, condição <strong>greater than</strong>, segundo valor <code>0</code>. Assim a regra para quando não tem nada esperando.</li>
+<li><strong>Ramo:</strong> clique em <strong>+ &gt; FOR EACH: Branch rule / related work items &gt; Advanced branching</strong>. Smart value <code>{{fetchedJiraAbsences.approverIds.split(",").distinct}}</code> e nome de variável <code>aprovador</code>. O ramo roda uma vez pra cada aprovador que tem pedido esperando.</li>
+<li><strong>E-mail, dentro do ramo:</strong> clique no <strong>+</strong> de dentro do ramo, escolha <strong>Send customized email</strong> e preencha:
+<ul>
+<li><strong>Email name:</strong> qualquer nome, por exemplo "Avisa aprovador de ausência".</li>
+<li><strong>Recipient(s):</strong> digite <code>{{aprovador}}</code> e clique na sugestão pra virar chip. Se só digitar, o Automation não reconhece.</li>
+<li>Marque <strong>Send messages separately to each recipient</strong>.</li>
+<li><strong>From:</strong> escolha um endereço da lista (por exemplo o padrão do site, <code>jira@&lt;site&gt;.atlassian.net</code>). Não digite um novo.</li>
+<li><strong>Subject</strong> e <strong>Content:</strong> veja a mensagem sugerida abaixo. O formato do conteúdo pode ser texto simples, rich text ou HTML.</li>
+</ul></li>
+<li>Dê um nome pra regra, por exemplo "Lembrete pros aprovadores de ausência", e clique em <strong>Turn on rule</strong>.</li>
+<li><strong>Teste:</strong> confira se tem pelo menos um pedido aguardando autorização no portal, clique em <strong>Run rule</strong> e abra o <strong>Audit log</strong> da regra. O passo do e-mail tem que ficar verde, e o aprovador deve receber o e-mail em alguns minutos. Confira também o spam e a quarentena.</li>
 </ol>
+<h3>Mensagem sugerida</h3>
 <p>A gente recomenda uma mensagem genérica, sem os detalhes dos pedidos: cada aprovador recebe um e-mail só, apenas se tiver algo esperando por ele, e ninguém vê a ausência dos outros. Os detalhes ficam no portal, na aba Aprovar delegação. O conteúdo do e-mail pode ser em HTML, então dá pra usar o layout da sua empresa.</p>
 <pre style="background:rgba(0,0,0,.25);border-radius:12px;padding:16px;overflow-x:auto;color:#cde9ff;font-size:.86rem;line-height:1.6">Assunto: Você tem pedido de ausência aguardando sua autorização
 
@@ -382,7 +410,7 @@ Enquanto o pedido não for decidido, você vai receber este lembrete todos os di
 <li>Nunca envia dados para fora da Atlassian.</li>
 </ul>
 
-<div class="warn"><strong>Limitações conhecidas:</strong> o app não manda e-mail sozinho; use a ação de Automation acima. O campo de aprovadores precisa estar na tela de edição do tipo de issue. Sem a opção Aprovação por grupo, campos de grupo só recebem um aviso, então uma etapa em que todos do grupo precisam aprovar espera o ausente voltar; nesse caso, ligue a opção ou use o campo de usuários (Approvers) com as pessoas listadas uma a uma. Algumas empresas que sincronizam usuários pelo provedor de identidade bloqueiam a criação de grupos fora dele; aí o grupo de cobertura não é criado, a issue fica com o aviso e o erro vai pra auditoria. Aprovadores vindos de campos do Assets ainda não são tratados.</div>
+<div class="warn"><strong>Limitações conhecidas:</strong> o app não manda e-mail por conta própria: pra avisar o aprovador, crie a regra de Automation descrita acima. O campo de aprovadores precisa estar na tela de edição do tipo de issue. Sem a opção Aprovação por grupo, campos de grupo só recebem um aviso, então uma etapa em que todos do grupo precisam aprovar espera o ausente voltar; nesse caso, ligue a opção ou use o campo de usuários (Approvers) com as pessoas listadas uma a uma. Algumas empresas que sincronizam usuários pelo provedor de identidade bloqueiam a criação de grupos fora dele; aí o grupo de cobertura não é criado, a issue fica com o aviso e o erro vai pra auditoria. Aprovadores vindos de campos do Assets ainda não são tratados.</div>
 
 <h2>Idiomas</h2>
 <p>Português (Brasil), Inglês (EUA). Cada pessoa vê o app no idioma do próprio Jira.</p>

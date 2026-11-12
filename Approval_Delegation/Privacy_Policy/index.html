@@ -145,7 +145,8 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
 
 <h2>6. Retention and deletion</h2>
 <ul>
-<li>Absences and the audit log are kept while the app is installed, so admins can review what happened.</li>
+<li>By default, absences and the audit log are kept while the app is installed, so admins can review what happened.</li>
+<li>The admin can set a retention period (6, 12 or 24 months) in Settings &gt; Advanced. After that period, the app deletes audit log entries and closed absences (ended, declined, expired or cancelled). Waiting, scheduled and active absences are never deleted, and each cleanup is recorded in the audit log.</li>
 <li>Changes to approver fields are part of the issue history in Jira, like any field change.</li>
 <li>When the app is uninstalled, its stored data is removed by the Forge platform following Atlassian's hosted storage lifecycle.</li>
 <li>Cover groups (<code>ad-cobertura-</code>) live in your site, not in the app's storage. If the app is uninstalled while one still exists, a site admin can delete it in admin.atlassian.com after the issues that use it are done.</li>
@@ -198,7 +199,8 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
 
 <h2>6. Retenção e exclusão</h2>
 <ul>
-<li>As ausências e a auditoria ficam guardadas enquanto o app estiver instalado, pra que o admin consiga revisar o que aconteceu.</li>
+<li>Por padrão, as ausências e a auditoria ficam guardadas enquanto o app estiver instalado, pra que o admin consiga revisar o que aconteceu.</li>
+<li>O admin pode definir um prazo de retenção (6, 12 ou 24 meses) em Configurações &gt; Avançado. Passado esse prazo, o app apaga as linhas da auditoria e as ausências encerradas, recusadas, expiradas ou canceladas. Ausências aguardando, agendadas ou ativas nunca são apagadas, e cada limpeza fica registrada na auditoria.</li>
 <li>As trocas nos campos de aprovadores ficam no histórico da issue no Jira, como qualquer alteração de campo.</li>
 <li>Quando o app é desinstalado, os dados guardados são removidos pela plataforma Forge, seguindo o ciclo de vida do armazenamento da Atlassian.</li>
 <li>Os grupos de cobertura (<code>ad-cobertura-</code>) ficam no seu site, não no armazenamento do app. Se o app for desinstalado com algum ainda existindo, um admin do site pode apagar ele no admin.atlassian.com depois que as issues que usam o grupo terminarem.</li>
