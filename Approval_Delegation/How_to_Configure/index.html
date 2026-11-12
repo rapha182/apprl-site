@@ -135,7 +135,7 @@ so a scheduled rule can email the approvers</pre>
 <h3>Jira settings: Settings</h3>
 <ul>
 <li><strong>General:</strong> turn automatic delegation on or off (absences stay saved when it is off) and decide whether absences need authorization.</li>
-<li><strong>Absence approvers:</strong> the list of licensed users who can authorize absences, with how many requests are waiting for each one. People pick one of these names in the portal.</li>
+<li><strong>Absence approvers:</strong> the list of licensed users who can authorize absences, with how many requests are waiting for each one and the email used for notifications. People pick one of these names in the portal.</li>
 <li><strong>Where the app works:</strong> the service projects (empty means all) and the approver fields used in your workflows. Any user or group field can be chosen, including the JSM Approvers and Approver groups fields.</li>
 <li><strong>When delegation is not possible:</strong> a default substitute, used when the chain of substitutes loops or ends with nobody available.</li>
 <li><strong>Advanced:</strong> keep the absent person next to the substitute instead of replacing them (only for approval steps that need 1 approval: if the step needs everyone, keeping the absent person blocks the approval), and how long to keep the audit log and closed absences: no limit, 6, 12 or 24 months.</li>
@@ -177,6 +177,21 @@ so a scheduled rule can email the approvers</pre>
 
 <h2>Email the approver with Jira Automation</h2>
 <p>The app does not send emails itself, and Forge apps cannot add triggers to Jira Automation. So the app adds an <strong>action</strong>, <strong>Pending absence requests (Approval Delegation)</strong>, that returns every absence request still waiting for authorization. You use it in a scheduled rule, once or twice a day, as a reminder until the approver decides. Nothing is marked as delivered: if an email fails, the request comes back on the next run.</p>
+<h3>Before the rule: the approver's email</h3>
+<p>Jira does not give apps the email of people who hide it in their profile, and Automation cannot turn an account ID into an email. So the admin sets each approver's email once:</p>
+<ol>
+<li>Go to <strong>Settings &gt; Apps &gt; Approval Delegation for JSM &gt; Settings &gt; Absence approvers</strong>.</li>
+<li>Click <strong>Edit</strong> next to the approver. If their profile shows the email, the field is already filled in.</li>
+<li>Check the email and click <strong>Save</strong>.</li>
+</ol>
+<p>The app checks that the email belongs to that person, using the profile or Jira's user search, and refuses an email that belongs to someone else. The column shows the status:</p>
+<ul>
+<li><strong>Confirmed:</strong> Jira confirmed the email belongs to the approver.</li>
+<li><strong>Set by the admin:</strong> Jira does not let the app confirm it (hidden email). It is used as typed.</li>
+<li><strong>Outdated:</strong> the email no longer matches the account, for example after a domain change. It is left out of Automation until the admin fixes it.</li>
+<li><strong>No email:</strong> the approver does not get the Automation email, but still sees the requests on the portal.</li>
+</ul>
+<p>Once a day the app reviews the saved emails: deactivated or deleted accounts, and people removed from the list, lose the email. The email is never written to the audit log.</p>
 <h3>Step by step: create the rule that notifies the approver</h3>
 <p>You need to be a Jira admin to create a global rule. Allow 15 to 20 minutes after the app is installed or updated for the action to show up in Automation.</p>
 <ol>
@@ -184,7 +199,7 @@ so a scheduled rule can email the approvers</pre>
 <li><strong>Trigger:</strong> choose <strong>Scheduled</strong>. Pick a time once a day (for example every day at 9 AM) or, for twice a day on weekdays, use the cron expression <code>0 0 9,14 ? * MON-FRI</code>. Leave the JQL option unticked: the rule does not need an issue.</li>
 <li><strong>Action:</strong> click <strong>+ &gt; THEN: Add an action</strong>, search for <strong>Pending absence requests</strong> (it is under Other apps) and add <strong>Pending absence requests (Approval Delegation)</strong>. There is nothing to configure: click <strong>Next</strong>.</li>
 <li><strong>Condition:</strong> click <strong>+ &gt; IF: Add a condition &gt; Smart values condition</strong>. First value <code>{{fetchedJiraAbsences.count}}</code>, condition <strong>greater than</strong>, second value <code>0</code>. This way the rule stops when nothing is waiting.</li>
-<li><strong>Branch:</strong> click <strong>+ &gt; FOR EACH: Branch rule / related work items &gt; Advanced branching</strong>. Smart value <code>{{fetchedJiraAbsences.approverIds.split(",").distinct}}</code> and variable name <code>approver</code>. The branch runs once for each approver who has requests waiting.</li>
+<li><strong>Branch:</strong> click <strong>+ &gt; FOR EACH: Branch rule / related work items &gt; Advanced branching</strong>. Smart value <code>{{fetchedJiraAbsences.approverEmails.split(",")}}</code> and variable name <code>approver</code>. The branch runs once for each approver with requests waiting and an email set.</li>
 <li><strong>Email, inside the branch:</strong> click the <strong>+</strong> inside the branch, choose <strong>Send customized email</strong> and fill in:
 <ul>
 <li><strong>Email name:</strong> any name, for example "Notify absence approver".</li>
@@ -215,7 +230,7 @@ You will get this reminder every day until the request is decided.</pre>
 <tr><td><code>{{fetchedJiraAbsences.userNames}}</code></td><td>Who will be away</td></tr>
 <tr><td><code>{{fetchedJiraAbsences.delegateNames}}</code></td><td>The substitutes</td></tr>
 <tr><td><code>{{fetchedJiraAbsences.approverNames}}</code></td><td>Who must authorize</td></tr>
-<tr><td><code>{{fetchedJiraAbsences.approverIds}}</code></td><td>Account IDs of who must authorize</td></tr>
+<tr><td><code>{{fetchedJiraAbsences.approverEmails}}</code></td><td>Email of each approver with requests waiting, one per approver, without repeats. Only approvers with an email set that is not outdated</td></tr>
 <tr><td><code>{{fetchedJiraAbsences.startDates}}</code></td><td>Start dates (YYYY-MM-DD)</td></tr>
 <tr><td><code>{{fetchedJiraAbsences.endDates}}</code></td><td>End dates (YYYY-MM-DD)</td></tr>
 <tr><td><code>{{fetchedJiraAbsences.reasons}}</code></td><td>Reason: vacation, leave or other</td></tr>
@@ -223,7 +238,7 @@ You will get this reminder every day until the request is decided.</pre>
 <tr><td><code>{{fetchedJiraAbsences.summary}}</code></td><td>One line per request: who, period, substitute, who must authorize and note</td></tr>
 </table>
 <ul>
-<li>Lists are comma separated and follow the same order: the first name in <code>userNames</code> matches the first in <code>delegateNames</code>, <code>startDates</code> and so on.</li>
+<li>Lists are comma separated and follow the same order (except <code>approverEmails</code>, which has one email per approver): the first name in <code>userNames</code> matches the first in <code>delegateNames</code>, <code>startDates</code> and so on.</li>
 <li>In <code>notes</code>, a comma inside a note becomes <code>;</code> and an empty note becomes <code>-</code>, so positions keep matching.</li>
 <li>The lists bring the requests of every approver, not only the one in the branch. That is why the generic message is recommended.</li>
 <li>To show a list one item per line: <code>{{fetchedJiraAbsences.userNames.split(",").join("&lt;br&gt;")}}</code>. For the summary in an HTML email: <code>{{fetchedJiraAbsences.summary.replace("\n","&lt;br&gt;")}}</code>.</li>
@@ -293,7 +308,7 @@ pra uma regra agendada mandar e-mail pros aprovadores</pre>
 <h3>Configurações do Jira: Configurações</h3>
 <ul>
 <li><strong>Geral:</strong> liga ou desliga a delegação automática (as ausências continuam salvas quando ela está desligada) e define se as ausências precisam de autorização.</li>
-<li><strong>Aprovadores de ausência:</strong> a lista de usuários licenciados que podem autorizar ausências, com quantos pedidos estão esperando cada um. No portal, a pessoa escolhe um desses nomes.</li>
+<li><strong>Aprovadores de ausência:</strong> a lista de usuários licenciados que podem autorizar ausências, com quantos pedidos estão esperando cada um e o e-mail usado nos avisos. No portal, a pessoa escolhe um desses nomes.</li>
 <li><strong>Onde o app atua:</strong> os projetos de serviço (vazio vale pra todos) e os campos de aprovadores usados nos seus workflows. Dá pra escolher qualquer campo de usuário ou de grupo, inclusive o Approvers e o Approver groups do JSM.</li>
 <li><strong>Quando não dá pra delegar:</strong> um substituto padrão, usado quando a cadeia de substitutos dá volta ou termina sem ninguém disponível.</li>
 <li><strong>Avançado:</strong> manter o ausente junto com o substituto, em vez de trocar (só pra etapas de aprovação que pedem 1 aprovação: se a etapa pede todos, manter o ausente trava a aprovação), e por quanto tempo guardar a auditoria e as ausências encerradas: sem limite, 6, 12 ou 24 meses.</li>
@@ -335,6 +350,21 @@ pra uma regra agendada mandar e-mail pros aprovadores</pre>
 
 <h2>Avisar o aprovador por e-mail com o Jira Automation</h2>
 <p>O app não manda e-mail sozinho, e apps Forge não conseguem criar gatilhos no Jira Automation. Por isso o app traz uma <strong>ação</strong>, a <strong>Pending absence requests (Approval Delegation)</strong>, que devolve todos os pedidos de ausência que ainda aguardam autorização. Você usa ela numa regra agendada, 1 ou 2 vezes por dia, como lembrete até o aprovador decidir. Nada é marcado como entregue: se um e-mail falhar, o pedido volta na próxima rodada.</p>
+<h3>Antes da regra: o e-mail do aprovador</h3>
+<p>O Jira não entrega pros apps o e-mail de quem deixa ele oculto no perfil, e o Automation não transforma um account ID em e-mail. Por isso o admin informa o e-mail de cada aprovador uma vez:</p>
+<ol>
+<li>Abra <strong>Configurações &gt; Apps &gt; Approval Delegation for JSM &gt; Configurações &gt; Aprovadores de ausência</strong>.</li>
+<li>Clique em <strong>Editar</strong> ao lado do aprovador. Se o perfil dele mostra o e-mail, o campo já vem preenchido.</li>
+<li>Confira o e-mail e clique em <strong>Salvar</strong>.</li>
+</ol>
+<p>O app confere se o e-mail é daquela pessoa, pelo perfil ou pela busca de usuários do Jira, e recusa e-mail de outra pessoa. A coluna mostra o status:</p>
+<ul>
+<li><strong>Confirmado:</strong> o Jira confirmou que o e-mail é do aprovador.</li>
+<li><strong>Informado pelo admin:</strong> o Jira não deixa o app conferir (e-mail oculto). Vale o que foi digitado.</li>
+<li><strong>Desatualizado:</strong> o e-mail não bate mais com a conta, por exemplo depois de uma troca de domínio. Fica fora do Automation até o admin corrigir.</li>
+<li><strong>Sem e-mail:</strong> o aprovador não recebe o e-mail do Automation, mas continua vendo os pedidos no portal.</li>
+</ul>
+<p>Uma vez por dia o app revisa os e-mails salvos: conta desativada ou excluída, e quem saiu da lista, perdem o e-mail. O e-mail nunca vai pra auditoria.</p>
 <h3>Passo a passo: criar a regra que avisa o aprovador</h3>
 <p>Pra criar uma regra global, você precisa ser admin do Jira. Depois de instalar ou atualizar o app, espere uns 15 a 20 minutos pra ação aparecer no Automation.</p>
 <ol>
@@ -342,7 +372,7 @@ pra uma regra agendada mandar e-mail pros aprovadores</pre>
 <li><strong>Gatilho:</strong> escolha <strong>Scheduled</strong>. Defina um horário 1 vez por dia (por exemplo todo dia às 9h) ou, pra 2 vezes por dia nos dias úteis, use a expressão cron <code>0 0 9,14 ? * MON-FRI</code>. Deixe a opção de JQL desmarcada: a regra não precisa de issue.</li>
 <li><strong>Ação:</strong> clique em <strong>+ &gt; THEN: Add an action</strong>, procure por <strong>Pending absence requests</strong> (fica em Other apps) e adicione a <strong>Pending absence requests (Approval Delegation)</strong>. Não tem nada pra configurar: clique em <strong>Next</strong>.</li>
 <li><strong>Condição:</strong> clique em <strong>+ &gt; IF: Add a condition &gt; Smart values condition</strong>. Primeiro valor <code>{{fetchedJiraAbsences.count}}</code>, condição <strong>greater than</strong>, segundo valor <code>0</code>. Assim a regra para quando não tem nada esperando.</li>
-<li><strong>Ramo:</strong> clique em <strong>+ &gt; FOR EACH: Branch rule / related work items &gt; Advanced branching</strong>. Smart value <code>{{fetchedJiraAbsences.approverIds.split(",").distinct}}</code> e nome de variável <code>aprovador</code>. O ramo roda uma vez pra cada aprovador que tem pedido esperando.</li>
+<li><strong>Ramo:</strong> clique em <strong>+ &gt; FOR EACH: Branch rule / related work items &gt; Advanced branching</strong>. Smart value <code>{{fetchedJiraAbsences.approverEmails.split(",")}}</code> e nome de variável <code>aprovador</code>. O ramo roda uma vez pra cada aprovador que tem pedido esperando e e-mail informado.</li>
 <li><strong>E-mail, dentro do ramo:</strong> clique no <strong>+</strong> de dentro do ramo, escolha <strong>Send customized email</strong> e preencha:
 <ul>
 <li><strong>Email name:</strong> qualquer nome, por exemplo "Avisa aprovador de ausência".</li>
@@ -373,7 +403,7 @@ Enquanto o pedido não for decidido, você vai receber este lembrete todos os di
 <tr><td><code>{{fetchedJiraAbsences.userNames}}</code></td><td>Quem vai ficar fora</td></tr>
 <tr><td><code>{{fetchedJiraAbsences.delegateNames}}</code></td><td>Os substitutos</td></tr>
 <tr><td><code>{{fetchedJiraAbsences.approverNames}}</code></td><td>Quem precisa autorizar</td></tr>
-<tr><td><code>{{fetchedJiraAbsences.approverIds}}</code></td><td>Account IDs de quem precisa autorizar</td></tr>
+<tr><td><code>{{fetchedJiraAbsences.approverEmails}}</code></td><td>E-mail de cada aprovador com pedido esperando, um por aprovador, sem repetir. Só quem tem e-mail informado e não desatualizado</td></tr>
 <tr><td><code>{{fetchedJiraAbsences.startDates}}</code></td><td>Datas iniciais (AAAA-MM-DD)</td></tr>
 <tr><td><code>{{fetchedJiraAbsences.endDates}}</code></td><td>Datas finais (AAAA-MM-DD)</td></tr>
 <tr><td><code>{{fetchedJiraAbsences.reasons}}</code></td><td>Motivo: vacation (férias), leave (licença) ou other (outro)</td></tr>
@@ -381,7 +411,7 @@ Enquanto o pedido não for decidido, você vai receber este lembrete todos os di
 <tr><td><code>{{fetchedJiraAbsences.summary}}</code></td><td>Uma linha por pedido: quem, período, substituto, quem precisa autorizar e observação</td></tr>
 </table>
 <ul>
-<li>As listas são separadas por vírgula e seguem a mesma ordem: o primeiro nome de <code>userNames</code> corresponde ao primeiro de <code>delegateNames</code>, <code>startDates</code> e assim por diante.</li>
+<li>As listas são separadas por vírgula e seguem a mesma ordem (menos <code>approverEmails</code>, que traz um e-mail por aprovador): o primeiro nome de <code>userNames</code> corresponde ao primeiro de <code>delegateNames</code>, <code>startDates</code> e assim por diante.</li>
 <li>Em <code>notes</code>, vírgula dentro da observação vira <code>;</code> e observação vazia vira <code>-</code>, pra posição continuar batendo.</li>
 <li>As listas trazem os pedidos de todos os aprovadores, não só do que está no ramo. Por isso a mensagem genérica é a recomendada.</li>
 <li>Pra mostrar uma lista com um item por linha: <code>{{fetchedJiraAbsences.userNames.split(",").join("&lt;br&gt;")}}</code>. Pro resumo num e-mail em HTML: <code>{{fetchedJiraAbsences.summary.replace("\n","&lt;br&gt;")}}</code>.</li>
