@@ -115,6 +115,7 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
 <li>Approver fields (user and group fields chosen by the admin), project, status and reporter of issues in the configured service projects.</li>
 <li>Basic user data: account ID, display name, account type, whether the account is active, product access and group membership, used to validate substitutes and authorizers.</li>
 <li>Members of the approver groups used on the issues, only when Group approvals is on, to build the cover groups.</li>
+<li>The email address of absence approvers, only when the person's profile makes it visible, and a user search by the email the admin typed, to confirm it belongs to that approver.</li>
 <li>The signed-in user's permissions, to check access to the admin screens and the issue panel.</li>
 </ul>
 <p>The app does <strong>not</strong> read issue descriptions, comments or attachments.</p>
@@ -123,12 +124,13 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
 <li>Absences: account IDs of the absent person, the substitute and the authorizer, the substitute's display name, dates, reason, an optional note and the authorization decision with its optional comment.</li>
 <li>Audit log: date, action, issue key and the account IDs involved.</li>
 <li>Settings and the list of absence approvers.</li>
+<li>The email of each absence approver, when the admin sets it in the approver list, used only so Jira Automation can notify them. It is not written to the audit log.</li>
 <li>When Group approvals is on: which cover group belongs to which original group, and which substitutes were added to it.</li>
 </ul>
 <h3>3.3 Groups the app creates</h3>
 <p>With Group approvals on, the app creates groups named <code>ad-cobertura-&lt;group name&gt;</code> in your site, with the members of the original group minus the absent people plus their substitutes. These groups are deleted by the app when no longer needed. Existing groups are never changed.</p>
 <h3>3.4 Data returned to Jira Automation</h3>
-<p>The Pending absence requests action returns, to the Automation rules of your own site, the names of the people away, substitutes and authorizers, the authorizers' account IDs, dates, reasons and notes of the requests waiting for authorization. This data stays inside your Atlassian site.</p>
+<p>The Pending absence requests action returns, to the Automation rules of your own site, the names of the people away, substitutes and authorizers, the emails the admin set for the authorizers, dates, reasons and notes of the requests waiting for authorization. This data stays inside your Atlassian site.</p>
 <h3>3.5 What the app does not collect</h3>
 <ul>
 <li>No payment card data (handled by Atlassian or the payment processor directly).</li>
@@ -148,6 +150,7 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
 <li>By default, absences and the audit log are kept while the app is installed, so admins can review what happened.</li>
 <li>The admin can set a retention period (6, 12 or 24 months) in Settings &gt; Advanced. After that period, the app deletes audit log entries and closed absences (ended, declined, expired or cancelled). Waiting, scheduled and active absences are never deleted, and each cleanup is recorded in the audit log.</li>
 <li>Changes to approver fields are part of the issue history in Jira, like any field change.</li>
+<li>An approver's email is deleted when the admin clears it, when the person is removed from the approver list, or when the daily check finds the account deactivated or deleted.</li>
 <li>When the app is uninstalled, its stored data is removed by the Forge platform following Atlassian's hosted storage lifecycle.</li>
 <li>Cover groups (<code>ad-cobertura-</code>) live in your site, not in the app's storage. If the app is uninstalled while one still exists, a site admin can delete it in admin.atlassian.com after the issues that use it are done.</li>
 <li>To ask for the deletion of specific records, contact <a href="mailto:support@app-rl.com" style="color:#79E2F2">support@app-rl.com</a>.</li>
@@ -169,6 +172,7 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
 <li>Campos de aprovadores (campos de usuário e de grupo escolhidos pelo admin), projeto, status e solicitante das issues dos projetos de serviço configurados.</li>
 <li>Dados básicos de usuário: account ID, nome de exibição, tipo de conta, se a conta está ativa, acesso aos produtos e grupos, usados pra validar substitutos e autorizadores.</li>
 <li>Membros dos grupos aprovadores usados nas issues, só quando a Aprovação por grupo está ligada, pra montar os grupos de cobertura.</li>
+<li>O e-mail dos aprovadores de ausência, só quando o perfil da pessoa deixa ele visível, e uma busca de usuários pelo e-mail que o admin digitou, pra confirmar que é daquele aprovador.</li>
 <li>As permissões do usuário logado, pra checar o acesso às telas de admin e ao painel da issue.</li>
 </ul>
 <p>O app <strong>não</strong> lê descrições, comentários nem anexos das issues.</p>
@@ -177,12 +181,13 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
 <li>Ausências: account IDs do ausente, do substituto e de quem autoriza, o nome de exibição do substituto, datas, motivo, uma observação opcional e a decisão de autorização com o comentário opcional.</li>
 <li>Auditoria: data, ação, chave da issue e os account IDs envolvidos.</li>
 <li>Configurações e a lista de aprovadores de ausência.</li>
+<li>O e-mail de cada aprovador de ausência, quando o admin informa na lista de aprovadores, usado só pro Jira Automation avisar essa pessoa. Ele não vai pra auditoria.</li>
 <li>Com a Aprovação por grupo ligada: qual grupo de cobertura pertence a qual grupo original, e quais substitutos foram colocados nele.</li>
 </ul>
 <h3>3.3 Grupos que o app cria</h3>
 <p>Com a Aprovação por grupo ligada, o app cria no seu site grupos chamados <code>ad-cobertura-&lt;nome do grupo&gt;</code>, com os membros do grupo original, sem os ausentes e com os substitutos. O próprio app apaga esses grupos quando não servem mais. Grupos que já existem nunca são alterados.</p>
 <h3>3.4 Dados devolvidos pro Jira Automation</h3>
-<p>A ação Pending absence requests devolve, pras regras de Automation do seu próprio site, os nomes de quem vai ficar fora, dos substitutos e de quem autoriza, os account IDs de quem autoriza, as datas, os motivos e as observações dos pedidos que aguardam autorização. Esses dados ficam dentro do seu site Atlassian.</p>
+<p>A ação Pending absence requests devolve, pras regras de Automation do seu próprio site, os nomes de quem vai ficar fora, dos substitutos e de quem autoriza, os e-mails que o admin informou pra quem autoriza, as datas, os motivos e as observações dos pedidos que aguardam autorização. Esses dados ficam dentro do seu site Atlassian.</p>
 <h3>3.5 O que o app não coleta</h3>
 <ul>
 <li>Nenhum dado de cartão de pagamento (tratado diretamente pela Atlassian ou pelo processador de pagamento).</li>
@@ -202,6 +207,7 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
 <li>Por padrão, as ausências e a auditoria ficam guardadas enquanto o app estiver instalado, pra que o admin consiga revisar o que aconteceu.</li>
 <li>O admin pode definir um prazo de retenção (6, 12 ou 24 meses) em Configurações &gt; Avançado. Passado esse prazo, o app apaga as linhas da auditoria e as ausências encerradas, recusadas, expiradas ou canceladas. Ausências aguardando, agendadas ou ativas nunca são apagadas, e cada limpeza fica registrada na auditoria.</li>
 <li>As trocas nos campos de aprovadores ficam no histórico da issue no Jira, como qualquer alteração de campo.</li>
+<li>O e-mail de um aprovador é apagado quando o admin limpa o campo, quando a pessoa sai da lista de aprovadores ou quando a revisão diária encontra a conta desativada ou excluída.</li>
 <li>Quando o app é desinstalado, os dados guardados são removidos pela plataforma Forge, seguindo o ciclo de vida do armazenamento da Atlassian.</li>
 <li>Os grupos de cobertura (<code>ad-cobertura-</code>) ficam no seu site, não no armazenamento do app. Se o app for desinstalado com algum ainda existindo, um admin do site pode apagar ele no admin.atlassian.com depois que as issues que usam o grupo terminarem.</li>
 <li>Pra pedir a exclusão de registros específicos, fale com <a href="mailto:support@app-rl.com" style="color:#79E2F2">support@app-rl.com</a>.</li>
