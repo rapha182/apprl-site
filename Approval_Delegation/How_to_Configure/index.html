@@ -138,13 +138,15 @@ so a scheduled rule can email the approvers</pre>
 <li><strong>Absence approvers:</strong> the list of licensed users who can authorize absences, with how many requests are waiting for each one. People pick one of these names in the portal.</li>
 <li><strong>Where the app works:</strong> the service projects (empty means all) and the approver fields used in your workflows. Any user or group field can be chosen, including the JSM Approvers and Approver groups fields.</li>
 <li><strong>When delegation is not possible:</strong> a default substitute, used when the chain of substitutes loops or ends with nobody available.</li>
-<li><strong>Advanced:</strong> keep the absent person next to the substitute instead of replacing them. Only for approval steps that need 1 approval: if the step needs everyone, keeping the absent person blocks the approval.</li>
+<li><strong>Advanced:</strong> keep the absent person next to the substitute instead of replacing them (only for approval steps that need 1 approval: if the step needs everyone, keeping the absent person blocks the approval), and how long to keep the audit log and closed absences: no limit, 6, 12 or 24 months.</li>
 <li><strong>Group approvals:</strong> cover approvals made by a group while one of its members is away. See the section below.</li>
 </ul>
 <h3>Jira settings: Absences</h3>
 <p>Every absence registered in the portal, with filters by status (open, waiting, scheduled, active, ended, declined or expired, cancelled, all) and by person. Each absence shows the reason, substitute, who authorizes, when it was added, the request note, the decision with its comment, and the issues already handed to the substitute. A Jira admin can <strong>adjust</strong> dates, substitute, reason and note, or <strong>cancel</strong> an absence that is waiting, scheduled or active. Adjusting does not change the authorization: a waiting request stays waiting and an authorized absence stays authorized. Everything goes to the audit log with the admin's name.</p>
 <h3>Jira settings: Audit log</h3>
-<p>Every absence, authorization, delegation, blocked delegation, group notice, cover group change and settings change, with filters by type (absences, delegations on issues, settings) and by person, and a link to the issue.</p>
+<p>Every absence, authorization, delegation, blocked delegation, group notice, cover group change, retention cleanup and settings change, with filters by type (absences, delegations on issues, settings) and by person, and a link to the issue.</p>
+<h3>Retention</h3>
+<p>By default nothing is deleted while the app is installed. When the admin picks a retention period in Settings &gt; Advanced, the hourly job gradually deletes audit log entries and absences that ended, were declined, expired or were cancelled once they are older than that period. Waiting, scheduled and active absences are never deleted, and each cleanup is recorded in the audit log with how much was removed.</p>
 <h3>Issue panel</h3>
 <p>On service desk issues, a side panel shows who the approval moved from and to, until when the person is away, who authorized the absence, group notices and cover group swaps.</p>
 
@@ -282,13 +284,15 @@ pra uma regra agendada mandar e-mail pros aprovadores</pre>
 <li><strong>Aprovadores de ausência:</strong> a lista de usuários licenciados que podem autorizar ausências, com quantos pedidos estão esperando cada um. No portal, a pessoa escolhe um desses nomes.</li>
 <li><strong>Onde o app atua:</strong> os projetos de serviço (vazio vale pra todos) e os campos de aprovadores usados nos seus workflows. Dá pra escolher qualquer campo de usuário ou de grupo, inclusive o Approvers e o Approver groups do JSM.</li>
 <li><strong>Quando não dá pra delegar:</strong> um substituto padrão, usado quando a cadeia de substitutos dá volta ou termina sem ninguém disponível.</li>
-<li><strong>Avançado:</strong> manter o ausente junto com o substituto, em vez de trocar. Só pra etapas de aprovação que pedem 1 aprovação: se a etapa pede todos, manter o ausente trava a aprovação.</li>
+<li><strong>Avançado:</strong> manter o ausente junto com o substituto, em vez de trocar (só pra etapas de aprovação que pedem 1 aprovação: se a etapa pede todos, manter o ausente trava a aprovação), e por quanto tempo guardar a auditoria e as ausências encerradas: sem limite, 6, 12 ou 24 meses.</li>
 <li><strong>Aprovação por grupo:</strong> cobre as aprovações feitas por grupo enquanto alguém do grupo está fora. Veja a seção abaixo.</li>
 </ul>
 <h3>Configurações do Jira: Ausências</h3>
 <p>Todas as ausências cadastradas no portal, com filtro por status (em aberto, aguardando, agendadas, ativas, encerradas, recusadas ou expiradas, canceladas, todas) e por pessoa. Cada ausência mostra o motivo, o substituto, quem autoriza, quando foi cadastrada, a observação do pedido, a decisão com o comentário e as issues que já foram pro substituto. Um admin do Jira pode <strong>ajustar</strong> datas, substituto, motivo e observação, ou <strong>cancelar</strong> uma ausência aguardando, agendada ou ativa. O ajuste não muda a autorização: pedido aguardando continua aguardando, e ausência autorizada continua valendo. Tudo vai pra auditoria com o nome do admin.</p>
 <h3>Configurações do Jira: Auditoria</h3>
-<p>Toda ausência, autorização, delegação, delegação bloqueada, aviso de grupo, mudança de grupo de cobertura e mudança de configuração, com filtro por tipo (ausências, delegações nas issues, configurações) e por pessoa, e link pra issue.</p>
+<p>Toda ausência, autorização, delegação, delegação bloqueada, aviso de grupo, mudança de grupo de cobertura, limpeza por retenção e mudança de configuração, com filtro por tipo (ausências, delegações nas issues, configurações) e por pessoa, e link pra issue.</p>
+<h3>Retenção</h3>
+<p>Por padrão nada é apagado enquanto o app estiver instalado. Quando o admin escolhe um prazo em Configurações &gt; Avançado, o job de hora em hora apaga aos poucos as linhas da auditoria e as ausências encerradas, recusadas, expiradas ou canceladas que passaram desse prazo. Ausências aguardando, agendadas ou ativas nunca são apagadas, e cada limpeza fica registrada na auditoria com quanto saiu.</p>
 <h3>Painel na issue</h3>
 <p>Nas issues de projetos de serviço, um painel lateral mostra de quem pra quem a aprovação passou, até quando a pessoa está fora, quem autorizou a ausência, os avisos de grupo e as trocas pelo grupo de cobertura.</p>
 
