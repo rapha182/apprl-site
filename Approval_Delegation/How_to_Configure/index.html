@@ -181,9 +181,10 @@ so a scheduled rule can email the approvers</pre>
 <p>Jira does not give apps the email of people who hide it in their profile, and Automation cannot turn an account ID into an email. So the admin sets each approver's email once:</p>
 <ol>
 <li>Go to <strong>Settings &gt; Apps &gt; Approval Delegation for JSM &gt; Settings &gt; Absence approvers</strong>.</li>
-<li>Click <strong>Edit</strong> next to the approver. If their profile shows the email, the field is already filled in.</li>
+<li>Click <strong>Edit</strong> next to the approver. The field comes filled in with the email you see on their Jira profile (the same one shown when you hover over the user in an issue).</li>
 <li>Check the email and click <strong>Save</strong>.</li>
 </ol>
+<p>To do it for everyone at once, click <strong>Fill in emails</strong> in the yellow warning above the list. The app looks up the email you see on the profile of each approver with no email or an outdated one, shows the list and only saves when you click <strong>Save all</strong>. Approvers whose email you cannot see are counted, so you can type theirs with Edit.</p>
 <p>The app checks that the email belongs to that person, using the profile or Jira's user search, and refuses an email that belongs to someone else. The column shows the status:</p>
 <ul>
 <li><strong>Confirmed:</strong> Jira confirmed the email belongs to the approver.</li>
@@ -354,9 +355,10 @@ pra uma regra agendada mandar e-mail pros aprovadores</pre>
 <p>O Jira não entrega pros apps o e-mail de quem deixa ele oculto no perfil, e o Automation não transforma um account ID em e-mail. Por isso o admin informa o e-mail de cada aprovador uma vez:</p>
 <ol>
 <li>Abra <strong>Configurações &gt; Apps &gt; Approval Delegation for JSM &gt; Configurações &gt; Aprovadores de ausência</strong>.</li>
-<li>Clique em <strong>Editar</strong> ao lado do aprovador. Se o perfil dele mostra o e-mail, o campo já vem preenchido.</li>
+<li>Clique em <strong>Editar</strong> ao lado do aprovador. O campo já vem com o e-mail que você vê no perfil dele no Jira (o mesmo que aparece quando você passa o mouse no usuário numa issue).</li>
 <li>Confira o e-mail e clique em <strong>Salvar</strong>.</li>
 </ol>
+<p>Pra fazer de todos de uma vez, clique em <strong>Preencher e-mails</strong>, no aviso amarelo acima da lista. O app busca o e-mail que você vê no perfil de cada aprovador sem e-mail ou com e-mail desatualizado, mostra a lista e só salva quando você clica em <strong>Salvar todos</strong>. Quem não tem e-mail visível pra você aparece na contagem, pra você digitar em Editar.</p>
 <p>O app confere se o e-mail é daquela pessoa, pelo perfil ou pela busca de usuários do Jira, e recusa e-mail de outra pessoa. A coluna mostra o status:</p>
 <ul>
 <li><strong>Confirmado:</strong> o Jira confirmou que o e-mail é do aprovador.</li>
