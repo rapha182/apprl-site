@@ -172,7 +172,7 @@ so a scheduled rule can email the approvers</pre>
 <li>Issues that were swapped keep the cover group until they are done, so no approval already given is lost.</li>
 <li>The hourly job deletes the cover group when nobody in the original group is away and no open issue has used it for two runs in a row.</li>
 </ol>
-<p><strong>Permission:</strong> creating groups and changing members needs a site admin. The app acts on behalf of the admin who turned the option on. The <strong>Test permission</strong> button creates a test group, adds and removes the admin and deletes the group, showing Jira's message if something fails.</p>
+<p><strong>Permission:</strong> creating groups and changing members needs a site admin. The app acts on behalf of the admin who turned the option on. The <strong>Test permission</strong> button creates a test group, adds and removes the admin and deletes the group, showing Jira's message if something fails. If that admin leaves the company or is no longer a site admin, another site admin clicks <strong>Use my account</strong>: the app tests the permission with their account before switching. The section warns when the account in charge is deactivated or when cover groups had errors in the last 24 hours.</p>
 <div class="warn"><strong>Do not delete a cover group by hand</strong> while an open issue uses it: the approval of that issue would point to a group that no longer exists. If it happens, the app creates the group again when needed and, when the issue is edited, puts the original group back on it.</div>
 
 <h2>Email the approver with Jira Automation</h2>
@@ -330,7 +330,7 @@ pra uma regra agendada mandar e-mail pros aprovadores</pre>
 <li>As issues trocadas ficam com o grupo de cobertura até terminar, pra não perder aprovação já dada.</li>
 <li>O job de hora em hora apaga o grupo de cobertura quando ninguém do grupo original está fora e nenhuma issue aberta usa ele por duas rodadas seguidas.</li>
 </ol>
-<p><strong>Permissão:</strong> criar grupo e mexer em membros exige administrador do site. O app age em nome do admin que ligou a opção. O botão <strong>Testar permissão</strong> cria um grupo de teste, coloca e tira o admin e apaga o grupo, mostrando a mensagem do Jira se algo falhar.</p>
+<p><strong>Permissão:</strong> criar grupo e mexer em membros exige administrador do site. O app age em nome do admin que ligou a opção. O botão <strong>Testar permissão</strong> cria um grupo de teste, coloca e tira o admin e apaga o grupo, mostrando a mensagem do Jira se algo falhar. Se esse admin sair da empresa ou deixar de ser administrador do site, outro admin do site clica em <strong>Usar a minha conta</strong>: o app testa a permissão com a conta dele antes de trocar. A seção avisa quando a conta responsável está desativada ou quando os grupos de cobertura tiveram erros nas últimas 24 horas.</p>
 <div class="warn"><strong>Não apague um grupo de cobertura na mão</strong> enquanto alguma issue aberta usar ele: a aprovação daquela issue passaria a apontar pra um grupo que não existe mais. Se acontecer, o app cria o grupo de novo quando precisar e, quando a issue for editada, devolve o grupo original nela.</div>
 
 <h2>Avisar o aprovador por e-mail com o Jira Automation</h2>
