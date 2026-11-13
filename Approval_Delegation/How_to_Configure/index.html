@@ -132,7 +132,7 @@ so a scheduled rule can email the approvers</pre>
 <ol>
 <li><strong>Install:</strong> a site admin installs Approval Delegation for JSM from the Atlassian Marketplace.</li>
 <li><strong>Open the settings:</strong> in Jira, go to <strong>Settings (gear) &gt; Apps</strong> and click <strong>Approval Delegation</strong> in the side menu. If your site sends Apps to admin.atlassian.com, find Approval Delegation for JSM in the list of apps and click <strong>Configure</strong>. Both open the same screen, and only Jira admins can use it.</li>
-<li><strong>Authorization (optional):</strong> in <strong>General</strong>, turn on "Absences need authorization" and add the absence approvers. To email them with Automation, also set each approver's email (see below).</li>
+<li><strong>Authorization (optional):</strong> in <strong>Settings &gt; General</strong>, turn on "Absences need authorization" and save. Then add the people in <strong>Absence approvers</strong>, in the side menu. To email them with Automation, also set each approver's email (see below).</li>
 <li><strong>Where the app works:</strong> pick the service projects (empty means all) and the approver fields your workflows use. Add any custom user or group field you use for approvals.</li>
 <li><strong>Default substitute (optional):</strong> used when the chain of substitutes loops or ends with nobody available.</li>
 <li><strong>Group approvals (optional):</strong> turn it on if approval steps use groups where everyone must approve. A site admin has to turn it on.</li>
@@ -142,26 +142,39 @@ so a scheduled rule can email the approvers</pre>
 
 <h2>The screens</h2>
 <h3>Customer portal: Out of office</h3>
-<p>Available in the portal profile menu for everyone, agents and customers. In <strong>My absences</strong> the person adds the reason (vacation, leave or other), start and end dates, who will cover for them and, when authorization is on, who will authorize it, plus an optional note. The substitute can be anyone on the site, agent or customer: just type at least 2 letters of the name. Each absence shows its status, who authorized or declined it, and how many approvals already went to the substitute. The person can edit or cancel an absence while it is waiting, scheduled or active. If the chosen substitute is also away in the same period, the portal warns right away.</p>
+<p>Available in the portal profile menu for everyone, agents and customers. In <strong>My absences</strong>:</p>
+<ul>
+<li>The absence in progress is highlighted: until when the person is away, a bar showing how much of the period has passed, who approves in their place, who authorized it and how many approvals already went to the substitute, with a link to see them.</li>
+<li>Below it, the <strong>upcoming</strong> absences (waiting for authorization or scheduled) and the <strong>history</strong> (ended, declined and expired).</li>
+<li><strong>New absence:</strong> the reason (vacation, leave or other), start and end dates, who will cover and, when authorization is on, who will authorize it, plus an optional note. The substitute can be anyone on the site, agent or customer: just type at least 2 letters of the name. While the form is filled in, a summary shows what will happen: who authorizes, when approvals move to the substitute and when they come back. If the substitute is also away in the same period, the portal warns when saving.</li>
+<li>The person can edit or cancel an absence while it is waiting, scheduled or active.</li>
+</ul>
 <h3>Customer portal: Approve delegation</h3>
-<p>Only people on the absence approvers list see this tab. It shows only the absences waiting for their decision, warns when an absence has already started, and lets them authorize or decline with a comment. If nobody decides before the end date, the request expires.</p>
-<h3>Jira settings: Settings</h3>
+<p>Only people on the absence approvers list see this tab. Each request waiting for their decision is a card with the period, the substitute and the note, a comment field and the Authorize and Decline buttons. Requests that already started are flagged. If nobody decides before the end date, the request expires.</p>
+<h3>Jira settings: the app's menu</h3>
+<p>The app's settings page has a side menu:</p>
+<ul>
+<li><strong>Overview:</strong> how many people are away now, how many requests are waiting for authorization, approvals delegated in the last 30 days and cover groups in use; who is away now and until when; a setup checklist (OK, To do, Optional) with shortcuts; and the recent activity.</li>
+<li><strong>Absences:</strong> see below.</li>
+<li><strong>Absence approvers:</strong> the list of licensed users who can authorize absences, with how many requests are waiting for each one and the email used for notifications. People pick one of these names in the portal.</li>
+<li><strong>Settings:</strong> in blocks, with a save bar at the end.
 <ul>
 <li><strong>General:</strong> turn automatic delegation on or off (absences stay saved when it is off) and decide whether absences need authorization.</li>
-<li><strong>Absence approvers:</strong> the list of licensed users who can authorize absences, with how many requests are waiting for each one and the email used for notifications. People pick one of these names in the portal.</li>
 <li><strong>Where the app works:</strong> the service projects (empty means all) and the approver fields used in your workflows. Any user or group field can be chosen, including the JSM Approvers and Approver groups fields.</li>
 <li><strong>When delegation is not possible:</strong> a default substitute, used when the chain of substitutes loops or ends with nobody available.</li>
 <li><strong>Advanced:</strong> keep the absent person next to the substitute instead of replacing them (only for approval steps that need 1 approval: if the step needs everyone, keeping the absent person blocks the approval), and how long to keep the audit log and closed absences: no limit, 6, 12 or 24 months.</li>
 <li><strong>Group approvals:</strong> cover approvals made by a group while one of its members is away. See the section below.</li>
+</ul></li>
+<li><strong>Audit log:</strong> see below.</li>
 </ul>
 <h3>Jira settings: Absences</h3>
 <p>Every absence registered in the portal, with filters by status (open, waiting, scheduled, active, ended, declined or expired, cancelled, all) and by person. Each absence shows the reason, substitute, who authorizes, when it was added, the request note, the decision with its comment, and the issues already handed to the substitute. A Jira admin can <strong>adjust</strong> dates, substitute, reason and note, or <strong>cancel</strong> an absence that is waiting, scheduled or active. Adjusting does not change the authorization: a waiting request stays waiting and an authorized absence stays authorized. Everything goes to the audit log with the admin's name.</p>
 <h3>Jira settings: Audit log</h3>
-<p>Every absence, authorization, delegation, blocked delegation, group notice, cover group change, retention cleanup and settings change, with filters by type (absences, delegations on issues, settings) and by person, and a link to the issue.</p>
+<p>Every absence, authorization, delegation, blocked delegation, group notice, cover group change, approver email change, retention cleanup and settings change, with filters by type (absences, delegations on issues, settings) and by person, and a link to the issue.</p>
 <h3>Retention</h3>
 <p>By default nothing is deleted while the app is installed. When the admin picks a retention period in Settings &gt; Advanced, the hourly job gradually deletes audit log entries and absences that ended, were declined, expired or were cancelled once they are older than that period. Waiting, scheduled and active absences are never deleted, and each cleanup is recorded in the audit log with how much was removed.</p>
 <h3>Issue panel</h3>
-<p>On service desk issues, a side panel shows who the approval moved from and to, until when the person is away, who authorized the absence, group notices and cover group swaps.</p>
+<p>On service desk issues, a side panel highlights the latest delegation: who the approval moved from and to, until when the person is away and who authorized the absence. Below it, a timeline shows everything the app did on that issue, including group notices and cover group swaps.</p>
 
 <h2>Delegation rules</h2>
 <ul>
@@ -193,7 +206,7 @@ so a scheduled rule can email the approvers</pre>
 <h3>Before the rule: the approver's email</h3>
 <p>Jira does not give apps the email of people who hide it in their profile, and Automation cannot turn an account ID into an email. So the admin sets each approver's email once:</p>
 <ol>
-<li>Open the app settings (see Getting started) and go to <strong>Settings &gt; Absence approvers</strong>.</li>
+<li>Open the app settings (see Getting started) and click <strong>Absence approvers</strong> in the side menu.</li>
 <li>Click <strong>Edit</strong> next to the approver. The field comes filled in with the email you see on their Jira profile (the same one shown when you hover over the user in an issue).</li>
 <li>Check the email and click <strong>Save</strong>.</li>
 </ol>
@@ -337,7 +350,7 @@ pra uma regra agendada mandar e-mail pros aprovadores</pre>
 <ol>
 <li><strong>Instalar:</strong> um admin do site instala o Approval Delegation for JSM pelo Atlassian Marketplace.</li>
 <li><strong>Abrir as configurações:</strong> no Jira, vá em <strong>Configurações (engrenagem) &gt; Apps</strong> e clique em <strong>Approval Delegation</strong> no menu lateral. Se no seu site Apps leva pro admin.atlassian.com, procure o Approval Delegation for JSM na lista de apps e clique em <strong>Configure</strong>. Os dois caminhos abrem a mesma tela, e só admin do Jira consegue usar.</li>
-<li><strong>Autorização (opcional):</strong> em <strong>Geral</strong>, ligue "Ausência precisa ser autorizada" e adicione os aprovadores de ausência. Pra avisar eles por e-mail com o Automation, informe também o e-mail de cada aprovador (veja abaixo).</li>
+<li><strong>Autorização (opcional):</strong> em <strong>Configurações &gt; Geral</strong>, ligue "Ausência precisa ser autorizada" e salve. Depois adicione as pessoas em <strong>Aprovadores de ausência</strong>, no menu lateral. Pra avisar eles por e-mail com o Automation, informe também o e-mail de cada aprovador (veja abaixo).</li>
 <li><strong>Onde o app atua:</strong> escolha os projetos de serviço (vazio vale pra todos) e os campos de aprovadores que seus workflows usam. Inclua qualquer campo personalizado de usuário ou de grupo que você use em aprovação.</li>
 <li><strong>Substituto padrão (opcional):</strong> usado quando a cadeia de substitutos dá volta ou termina sem ninguém disponível.</li>
 <li><strong>Aprovação por grupo (opcional):</strong> ligue se as etapas de aprovação usam grupos em que todos precisam aprovar. Quem liga precisa ser admin do site.</li>
@@ -347,26 +360,39 @@ pra uma regra agendada mandar e-mail pros aprovadores</pre>
 
 <h2>As telas</h2>
 <h3>Portal: Fora do escritório</h3>
-<p>Fica no menu do perfil do portal, pra todo mundo, agente ou cliente. Em <strong>Minhas ausências</strong> a pessoa informa o motivo (férias, licença ou outro), a data inicial e a final, quem vai substituí-la e, quando a autorização está ligada, quem vai autorizar, além de uma observação opcional. O substituto pode ser qualquer pessoa do site, agente ou cliente: é só digitar pelo menos 2 letras do nome. Cada ausência mostra o status, quem autorizou ou recusou e quantas aprovações já foram pro substituto. Dá pra editar ou cancelar enquanto a ausência está aguardando, agendada ou ativa. Se o substituto escolhido também estiver fora no mesmo período, o portal avisa na hora.</p>
+<p>Fica no menu do perfil do portal, pra todo mundo, agente ou cliente. Em <strong>Minhas ausências</strong>:</p>
+<ul>
+<li>A ausência em andamento aparece em destaque: até quando a pessoa está fora, uma barra mostrando quanto do período já passou, quem aprova no lugar dela, quem autorizou e quantas aprovações já foram pro substituto, com um link pra ver quais.</li>
+<li>Abaixo ficam as <strong>próximas</strong> (aguardando autorização ou agendadas) e o <strong>histórico</strong> (encerradas, recusadas e expiradas).</li>
+<li><strong>Nova ausência:</strong> o motivo (férias, licença ou outro), a data inicial e a final, quem vai substituir e, quando a autorização está ligada, quem vai autorizar, além de uma observação opcional. O substituto pode ser qualquer pessoa do site, agente ou cliente: é só digitar pelo menos 2 letras do nome. Enquanto a pessoa preenche, um resumo mostra o que vai acontecer: quem autoriza, quando as aprovações passam pro substituto e quando voltam. Se o substituto também estiver fora no mesmo período, o portal avisa ao salvar.</li>
+<li>Dá pra editar ou cancelar enquanto a ausência está aguardando, agendada ou ativa.</li>
+</ul>
 <h3>Portal: Aprovar delegação</h3>
-<p>Só quem está na lista de aprovadores de ausência vê essa aba. Ela mostra só as ausências que esperam a decisão daquela pessoa, avisa quando a ausência já começou e permite autorizar ou recusar com comentário. Se ninguém decidir até a data final, o pedido expira.</p>
-<h3>Configurações do Jira: Configurações</h3>
+<p>Só quem está na lista de aprovadores de ausência vê essa aba. Cada pedido esperando a decisão daquela pessoa é um cartão com o período, o substituto e a observação, um campo de comentário e os botões Autorizar e Recusar. Os pedidos que já começaram ficam marcados. Se ninguém decidir até a data final, o pedido expira.</p>
+<h3>Configurações do Jira: o menu do app</h3>
+<p>A página de configurações do app tem um menu lateral:</p>
+<ul>
+<li><strong>Visão geral:</strong> quantas pessoas estão fora agora, quantos pedidos esperam autorização, aprovações delegadas nos últimos 30 dias e grupos de cobertura existindo; quem está fora agora e até quando; um checklist da configuração (OK, Pendente, Opcional) com atalhos; e a atividade recente.</li>
+<li><strong>Ausências:</strong> veja abaixo.</li>
+<li><strong>Aprovadores de ausência:</strong> a lista de usuários licenciados que podem autorizar ausências, com quantos pedidos estão esperando cada um e o e-mail usado nos avisos. No portal, a pessoa escolhe um desses nomes.</li>
+<li><strong>Configurações:</strong> em blocos, com uma barra de salvar no fim.
 <ul>
 <li><strong>Geral:</strong> liga ou desliga a delegação automática (as ausências continuam salvas quando ela está desligada) e define se as ausências precisam de autorização.</li>
-<li><strong>Aprovadores de ausência:</strong> a lista de usuários licenciados que podem autorizar ausências, com quantos pedidos estão esperando cada um e o e-mail usado nos avisos. No portal, a pessoa escolhe um desses nomes.</li>
 <li><strong>Onde o app atua:</strong> os projetos de serviço (vazio vale pra todos) e os campos de aprovadores usados nos seus workflows. Dá pra escolher qualquer campo de usuário ou de grupo, inclusive o Approvers e o Approver groups do JSM.</li>
 <li><strong>Quando não dá pra delegar:</strong> um substituto padrão, usado quando a cadeia de substitutos dá volta ou termina sem ninguém disponível.</li>
 <li><strong>Avançado:</strong> manter o ausente junto com o substituto, em vez de trocar (só pra etapas de aprovação que pedem 1 aprovação: se a etapa pede todos, manter o ausente trava a aprovação), e por quanto tempo guardar a auditoria e as ausências encerradas: sem limite, 6, 12 ou 24 meses.</li>
 <li><strong>Aprovação por grupo:</strong> cobre as aprovações feitas por grupo enquanto alguém do grupo está fora. Veja a seção abaixo.</li>
+</ul></li>
+<li><strong>Auditoria:</strong> veja abaixo.</li>
 </ul>
 <h3>Configurações do Jira: Ausências</h3>
 <p>Todas as ausências cadastradas no portal, com filtro por status (em aberto, aguardando, agendadas, ativas, encerradas, recusadas ou expiradas, canceladas, todas) e por pessoa. Cada ausência mostra o motivo, o substituto, quem autoriza, quando foi cadastrada, a observação do pedido, a decisão com o comentário e as issues que já foram pro substituto. Um admin do Jira pode <strong>ajustar</strong> datas, substituto, motivo e observação, ou <strong>cancelar</strong> uma ausência aguardando, agendada ou ativa. O ajuste não muda a autorização: pedido aguardando continua aguardando, e ausência autorizada continua valendo. Tudo vai pra auditoria com o nome do admin.</p>
 <h3>Configurações do Jira: Auditoria</h3>
-<p>Toda ausência, autorização, delegação, delegação bloqueada, aviso de grupo, mudança de grupo de cobertura, limpeza por retenção e mudança de configuração, com filtro por tipo (ausências, delegações nas issues, configurações) e por pessoa, e link pra issue.</p>
+<p>Toda ausência, autorização, delegação, delegação bloqueada, aviso de grupo, mudança de grupo de cobertura, mudança no e-mail de aprovador, limpeza por retenção e mudança de configuração, com filtro por tipo (ausências, delegações nas issues, configurações) e por pessoa, e link pra issue.</p>
 <h3>Retenção</h3>
 <p>Por padrão nada é apagado enquanto o app estiver instalado. Quando o admin escolhe um prazo em Configurações &gt; Avançado, o job de hora em hora apaga aos poucos as linhas da auditoria e as ausências encerradas, recusadas, expiradas ou canceladas que passaram desse prazo. Ausências aguardando, agendadas ou ativas nunca são apagadas, e cada limpeza fica registrada na auditoria com quanto saiu.</p>
 <h3>Painel na issue</h3>
-<p>Nas issues de projetos de serviço, um painel lateral mostra de quem pra quem a aprovação passou, até quando a pessoa está fora, quem autorizou a ausência, os avisos de grupo e as trocas pelo grupo de cobertura.</p>
+<p>Nas issues de projetos de serviço, um painel lateral destaca a delegação mais recente: de quem pra quem a aprovação passou, até quando a pessoa está fora e quem autorizou a ausência. Abaixo, uma linha do tempo mostra tudo o que o app fez naquela issue, inclusive os avisos de grupo e as trocas pelo grupo de cobertura.</p>
 
 <h2>Regras de delegação</h2>
 <ul>
@@ -398,7 +424,7 @@ pra uma regra agendada mandar e-mail pros aprovadores</pre>
 <h3>Antes da regra: o e-mail do aprovador</h3>
 <p>O Jira não entrega pros apps o e-mail de quem deixa ele oculto no perfil, e o Automation não transforma um account ID em e-mail. Por isso o admin informa o e-mail de cada aprovador uma vez:</p>
 <ol>
-<li>Abra as configurações do app (veja Primeiros passos) e vá em <strong>Configurações &gt; Aprovadores de ausência</strong>.</li>
+<li>Abra as configurações do app (veja Primeiros passos) e clique em <strong>Aprovadores de ausência</strong>, no menu lateral.</li>
 <li>Clique em <strong>Editar</strong> ao lado do aprovador. O campo já vem com o e-mail que você vê no perfil dele no Jira (o mesmo que aparece quando você passa o mouse no usuário numa issue).</li>
 <li>Confira o e-mail e clique em <strong>Salvar</strong>.</li>
 </ol>
