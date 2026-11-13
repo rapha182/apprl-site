@@ -127,6 +127,19 @@ Issue panel and audit log show what happened and why
 Jira Automation (optional): the app's action lists pending requests
 so a scheduled rule can email the approvers</pre>
 
+<h2>Getting started</h2>
+<p>Right after installation the app already works with the defaults: all service projects, the JSM Approvers and Approver groups fields, and absences taking effect without authorization. The steps below adjust it to your company.</p>
+<ol>
+<li><strong>Install:</strong> a site admin installs Approval Delegation for JSM from the Atlassian Marketplace.</li>
+<li><strong>Open the settings:</strong> in Jira, go to <strong>Settings (gear) &gt; Apps</strong> and click <strong>Approval Delegation</strong> in the side menu. If your site sends Apps to admin.atlassian.com, find Approval Delegation for JSM in the list of apps and click <strong>Configure</strong>. Both open the same screen, and only Jira admins can use it.</li>
+<li><strong>Authorization (optional):</strong> in <strong>General</strong>, turn on "Absences need authorization" and add the absence approvers. To email them with Automation, also set each approver's email (see below).</li>
+<li><strong>Where the app works:</strong> pick the service projects (empty means all) and the approver fields your workflows use. Add any custom user or group field you use for approvals.</li>
+<li><strong>Default substitute (optional):</strong> used when the chain of substitutes loops or ends with nobody available.</li>
+<li><strong>Group approvals (optional):</strong> turn it on if approval steps use groups where everyone must approve. A site admin has to turn it on.</li>
+<li><strong>Tell people:</strong> absences are added in the customer portal, in the profile menu, under <strong>Out of office</strong>.</li>
+<li><strong>Email the approvers (optional):</strong> create the Automation rule described below.</li>
+</ol>
+
 <h2>The screens</h2>
 <h3>Customer portal: Out of office</h3>
 <p>Available in the portal profile menu for everyone, agents and customers. In <strong>My absences</strong> the person adds the reason (vacation, leave or other), start and end dates, who will cover for them and, when authorization is on, who will authorize it, plus an optional note. The substitute can be anyone on the site, agent or customer: just type at least 2 letters of the name. Each absence shows its status, who authorized or declined it, and how many approvals already went to the substitute. The person can edit or cancel an absence while it is waiting, scheduled or active. If the chosen substitute is also away in the same period, the portal warns right away.</p>
@@ -180,7 +193,7 @@ so a scheduled rule can email the approvers</pre>
 <h3>Before the rule: the approver's email</h3>
 <p>Jira does not give apps the email of people who hide it in their profile, and Automation cannot turn an account ID into an email. So the admin sets each approver's email once:</p>
 <ol>
-<li>Go to <strong>Settings &gt; Apps &gt; Approval Delegation for JSM &gt; Settings &gt; Absence approvers</strong>.</li>
+<li>Open the app settings (see Getting started) and go to <strong>Settings &gt; Absence approvers</strong>.</li>
 <li>Click <strong>Edit</strong> next to the approver. The field comes filled in with the email you see on their Jira profile (the same one shown when you hover over the user in an issue).</li>
 <li>Check the email and click <strong>Save</strong>.</li>
 </ol>
@@ -253,7 +266,7 @@ You will get this reminder every day until the request is decided.</pre>
 <tr><th>User</th><th>Access</th></tr>
 <tr><td>Anyone with access to the JSM portal (agents and customers)</td><td>Add, edit and cancel their own absences</td></tr>
 <tr><td>People on the absence approvers list (licensed users)</td><td>Approve delegation tab in the portal, for absences that chose them</td></tr>
-<tr><td>Jira administrators (Administer Jira)</td><td>Settings, absence approvers list, Absences tab (adjust and cancel any absence) and audit log</td></tr>
+<tr><td>Jira administrators (Administer Jira)</td><td>Settings, absence approvers list and their emails, Absences tab (adjust and cancel any absence) and audit log</td></tr>
 <tr><td>Site administrators</td><td>Turn on Group approvals (the app creates cover groups on their behalf)</td></tr>
 <tr><td>Agents</td><td>Issue panel, on issues they can already see</td></tr>
 <tr><td>Automation rule authors</td><td>The Pending absence requests action</td></tr>
@@ -268,10 +281,18 @@ You will get this reminder every day until the request is decided.</pre>
 <li>Never sends data outside Atlassian.</li>
 </ul>
 
-<div class="warn"><strong>Known limitations:</strong> the app does not send emails by itself: to notify the approver, create the Automation rule described above. The approver field must be on the issue type's edit screen. Without the Group approvals option, group fields only get a notice, so a step where everyone in the group must approve waits for the absent person; in that case turn the option on or use the user field (Approvers) with the people listed one by one. Some organizations that sync users from an identity provider block creating groups outside it; then the cover group cannot be created, the issue keeps the notice and the error goes to the audit log. Approvers coming from Assets fields are not handled yet.</div>
+<h2>Uninstalling</h2>
+<ul>
+<li>Approvals already handed to substitutes stay with them. Approver fields are not changed back.</li>
+<li>Issues swapped to a cover group keep it. A site admin can delete the <code>ad-cobertura-</code> groups in admin.atlassian.com after those issues are done.</li>
+<li>Absences, the audit log, settings and approver emails are removed by the Forge platform, following Atlassian's storage lifecycle.</li>
+<li>Automation rules that use the Pending absence requests action stop working. Turn them off or delete them.</li>
+</ul>
+
+<div class="warn"><strong>Known limitations:</strong> the app does not send emails by itself: to notify the approver, create the Automation rule described above, and set each approver's email in the settings. The approver field must be on the issue type's edit screen. Without the Group approvals option, group fields only get a notice, so a step where everyone in the group must approve waits for the absent person; in that case turn the option on or use the user field (Approvers) with the people listed one by one. Some organizations that sync users from an identity provider block creating groups outside it; then the cover group cannot be created, the issue keeps the notice and the error goes to the audit log. Approvers coming from Assets fields are not handled yet.</div>
 
 <h2>Languages</h2>
-<p>Portuguese (Brazil), English (US). Each person sees the app in their own Jira language.</p>
+<p>Portuguese (Brazil) and English (US). Each person sees the app in their own Jira language, and other languages see English.</p>
 
 <h2>Support</h2>
 <p>Email <a href="mailto:support@app-rl.com" style="color:#79E2F2">support@app-rl.com</a>.</p>
@@ -300,6 +321,19 @@ Painel na issue e auditoria mostram o que aconteceu e por quê
   v
 Jira Automation (opcional): a ação do app lista os pedidos pendentes
 pra uma regra agendada mandar e-mail pros aprovadores</pre>
+
+<h2>Primeiros passos</h2>
+<p>Logo depois de instalar, o app já funciona com o padrão: todos os projetos de serviço, os campos Approvers e Approver groups do JSM, e ausências valendo sem autorização. Os passos abaixo deixam ele do jeito da sua empresa.</p>
+<ol>
+<li><strong>Instalar:</strong> um admin do site instala o Approval Delegation for JSM pelo Atlassian Marketplace.</li>
+<li><strong>Abrir as configurações:</strong> no Jira, vá em <strong>Configurações (engrenagem) &gt; Apps</strong> e clique em <strong>Approval Delegation</strong> no menu lateral. Se no seu site Apps leva pro admin.atlassian.com, procure o Approval Delegation for JSM na lista de apps e clique em <strong>Configure</strong>. Os dois caminhos abrem a mesma tela, e só admin do Jira consegue usar.</li>
+<li><strong>Autorização (opcional):</strong> em <strong>Geral</strong>, ligue "Ausência precisa ser autorizada" e adicione os aprovadores de ausência. Pra avisar eles por e-mail com o Automation, informe também o e-mail de cada aprovador (veja abaixo).</li>
+<li><strong>Onde o app atua:</strong> escolha os projetos de serviço (vazio vale pra todos) e os campos de aprovadores que seus workflows usam. Inclua qualquer campo personalizado de usuário ou de grupo que você use em aprovação.</li>
+<li><strong>Substituto padrão (opcional):</strong> usado quando a cadeia de substitutos dá volta ou termina sem ninguém disponível.</li>
+<li><strong>Aprovação por grupo (opcional):</strong> ligue se as etapas de aprovação usam grupos em que todos precisam aprovar. Quem liga precisa ser admin do site.</li>
+<li><strong>Avisar as pessoas:</strong> a ausência é cadastrada no portal, no menu do perfil, em <strong>Fora do escritório</strong>.</li>
+<li><strong>Avisar os aprovadores por e-mail (opcional):</strong> crie a regra de Automation explicada abaixo.</li>
+</ol>
 
 <h2>As telas</h2>
 <h3>Portal: Fora do escritório</h3>
@@ -354,7 +388,7 @@ pra uma regra agendada mandar e-mail pros aprovadores</pre>
 <h3>Antes da regra: o e-mail do aprovador</h3>
 <p>O Jira não entrega pros apps o e-mail de quem deixa ele oculto no perfil, e o Automation não transforma um account ID em e-mail. Por isso o admin informa o e-mail de cada aprovador uma vez:</p>
 <ol>
-<li>Abra <strong>Configurações &gt; Apps &gt; Approval Delegation for JSM &gt; Configurações &gt; Aprovadores de ausência</strong>.</li>
+<li>Abra as configurações do app (veja Primeiros passos) e vá em <strong>Configurações &gt; Aprovadores de ausência</strong>.</li>
 <li>Clique em <strong>Editar</strong> ao lado do aprovador. O campo já vem com o e-mail que você vê no perfil dele no Jira (o mesmo que aparece quando você passa o mouse no usuário numa issue).</li>
 <li>Confira o e-mail e clique em <strong>Salvar</strong>.</li>
 </ol>
@@ -427,7 +461,7 @@ Enquanto o pedido não for decidido, você vai receber este lembrete todos os di
 <tr><th>Usuário</th><th>Acesso</th></tr>
 <tr><td>Quem acessa o portal do JSM (agentes e clientes)</td><td>Cadastrar, editar e cancelar as próprias ausências</td></tr>
 <tr><td>Quem está na lista de aprovadores de ausência (usuários licenciados)</td><td>Aba Aprovar delegação no portal, para as ausências que escolheram essa pessoa</td></tr>
-<tr><td>Administradores do Jira (Administer Jira)</td><td>Configurações, lista de aprovadores de ausência, aba Ausências (ajustar e cancelar qualquer ausência) e auditoria</td></tr>
+<tr><td>Administradores do Jira (Administer Jira)</td><td>Configurações, lista de aprovadores de ausência e os e-mails deles, aba Ausências (ajustar e cancelar qualquer ausência) e auditoria</td></tr>
 <tr><td>Administradores do site</td><td>Ligar a Aprovação por grupo (o app cria os grupos de cobertura em nome deles)</td></tr>
 <tr><td>Agentes</td><td>Painel na issue, nas issues que eles já conseguem ver</td></tr>
 <tr><td>Quem cria regras de Automation</td><td>A ação Pending absence requests</td></tr>
@@ -442,10 +476,18 @@ Enquanto o pedido não for decidido, você vai receber este lembrete todos os di
 <li>Nunca envia dados para fora da Atlassian.</li>
 </ul>
 
-<div class="warn"><strong>Limitações conhecidas:</strong> o app não manda e-mail por conta própria: pra avisar o aprovador, crie a regra de Automation descrita acima. O campo de aprovadores precisa estar na tela de edição do tipo de issue. Sem a opção Aprovação por grupo, campos de grupo só recebem um aviso, então uma etapa em que todos do grupo precisam aprovar espera o ausente voltar; nesse caso, ligue a opção ou use o campo de usuários (Approvers) com as pessoas listadas uma a uma. Algumas empresas que sincronizam usuários pelo provedor de identidade bloqueiam a criação de grupos fora dele; aí o grupo de cobertura não é criado, a issue fica com o aviso e o erro vai pra auditoria. Aprovadores vindos de campos do Assets ainda não são tratados.</div>
+<h2>Desinstalação</h2>
+<ul>
+<li>As aprovações que já foram pros substitutos ficam com eles. Os campos de aprovadores não voltam.</li>
+<li>As issues trocadas pra um grupo de cobertura continuam com ele. Um admin do site pode apagar os grupos <code>ad-cobertura-</code> no admin.atlassian.com depois que essas issues terminarem.</li>
+<li>Ausências, auditoria, configurações e e-mails dos aprovadores são removidos pela plataforma Forge, seguindo o ciclo de vida do armazenamento da Atlassian.</li>
+<li>As regras de Automation que usam a ação Pending absence requests param de funcionar. Desligue ou apague essas regras.</li>
+</ul>
+
+<div class="warn"><strong>Limitações conhecidas:</strong> o app não manda e-mail por conta própria: pra avisar o aprovador, crie a regra de Automation descrita acima e informe o e-mail de cada aprovador nas configurações. O campo de aprovadores precisa estar na tela de edição do tipo de issue. Sem a opção Aprovação por grupo, campos de grupo só recebem um aviso, então uma etapa em que todos do grupo precisam aprovar espera o ausente voltar; nesse caso, ligue a opção ou use o campo de usuários (Approvers) com as pessoas listadas uma a uma. Algumas empresas que sincronizam usuários pelo provedor de identidade bloqueiam a criação de grupos fora dele; aí o grupo de cobertura não é criado, a issue fica com o aviso e o erro vai pra auditoria. Aprovadores vindos de campos do Assets ainda não são tratados.</div>
 
 <h2>Idiomas</h2>
-<p>Português (Brasil), Inglês (EUA). Cada pessoa vê o app no idioma do próprio Jira.</p>
+<p>Português (Brasil) e Inglês (EUA). Cada pessoa vê o app no idioma do próprio Jira, e os outros idiomas veem em inglês.</p>
 
 <h2>Suporte</h2>
 <p>E-mail <a href="mailto:support@app-rl.com" style="color:#79E2F2">support@app-rl.com</a>.</p>

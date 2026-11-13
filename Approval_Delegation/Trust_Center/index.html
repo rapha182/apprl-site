@@ -104,13 +104,13 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
         <div class="doc-content">
 <div data-lang-block="en-US">
 <h2>Authentication model</h2>
-<p>The App never asks for API tokens or passwords. Screens run inside Jira and the JSM portal through the Forge platform. Admin screens check, on every call, that the signed-in user is a Jira administrator. Changes to approver fields are made by the App's own identity in Jira, so they show up in the issue history as made by the App.</p>
+<p>The App never asks for API tokens or passwords. Screens run inside Jira and the JSM portal through the Forge platform. Admin screens check, on every call, that the signed-in user is a Jira administrator. Changes to approver fields are made by the App's own identity in Jira, so they show up in the issue history as made by the App. The App acts as a person in only two cases: on the settings screen, it reads users' emails as the signed-in admin sees them, to suggest the approver's email; and with Group approvals on, it manages the cover groups on behalf of the site admin in charge.</p>
 
 <h2>Scopes</h2>
 <ul>
 <li><code>read:jira-work</code>: read issues, approver fields and projects, and run JQL searches.</li>
 <li><code>write:jira-work</code>: update the approver fields.</li>
-<li><code>read:jira-user</code>: read user names, account type, product access and groups, and check admin permission.</li>
+<li><code>read:jira-user</code>: read user names, account type, product access and groups, check admin permission, and look up and confirm the email of absence approvers.</li>
 <li><code>storage:app</code>: keep absences, the audit log and settings in Forge hosted storage.</li>
 <li><code>manage:jira-configuration</code> (with impersonation): only for Group approvals, to read group members and create, adjust and delete the App's own <code>ad-cobertura-</code> groups. Creating groups needs a site admin, so the App acts on behalf of the admin who turned the option on. With the option off, this scope is not used.</li>
 </ul>
@@ -128,7 +128,8 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
 
 <h2>Data handling</h2>
 <ul>
-<li>Only what the App needs is stored: absences, the audit log, settings and the list of absence approvers.</li>
+<li>Only what the App needs is stored: absences, the audit log, settings, the list of absence approvers and the email the admin sets for each of them.</li>
+<li>Approver emails are only saved after an admin confirms them, are never written to the audit log, and are deleted when the person leaves the list or their account is deactivated or deleted.</li>
 <li>Stored data stays in Forge hosted storage, isolated per installation, inside Atlassian's infrastructure.</li>
 <li>The App does not read issue descriptions, comments or attachments.</li>
 <li>Admins can set a retention period for the audit log and closed absences.</li>
@@ -138,7 +139,7 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
 <p>The App does not call any external service. It only uses Atlassian's own Jira APIs, through the Forge platform, and is eligible for the Runs on Atlassian program.</p>
 
 <h2>Audit trail</h2>
-<p>Every absence, authorization, delegation, blocked delegation, admin adjustment, cover group change and settings change is recorded with date, action and the people involved. Admins can filter it by type and person.</p>
+<p>Every absence, authorization, delegation, blocked delegation, admin adjustment, cover group change, approver email change, retention cleanup and settings change is recorded with date, action and the people involved. Admins can filter it by type and person.</p>
 
 <h2>Reporting a vulnerability</h2>
 <p>If you identify a security vulnerability in this App, contact <a href="mailto:support@app-rl.com" style="color:#79E2F2">support@app-rl.com</a> directly, without prior public disclosure.</p>
@@ -148,13 +149,13 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
 </div>
 <div data-lang-block="pt-BR" hidden>
 <h2>Modelo de autenticação</h2>
-<p>O App nunca pede tokens de API nem senhas. As telas rodam dentro do Jira e do portal do JSM, pela plataforma Forge. As telas de admin conferem, em toda chamada, se o usuário logado é administrador do Jira. As trocas nos campos de aprovadores são feitas com a identidade do próprio App no Jira, então aparecem no histórico da issue como feitas pelo App.</p>
+<p>O App nunca pede tokens de API nem senhas. As telas rodam dentro do Jira e do portal do JSM, pela plataforma Forge. As telas de admin conferem, em toda chamada, se o usuário logado é administrador do Jira. As trocas nos campos de aprovadores são feitas com a identidade do próprio App no Jira, então aparecem no histórico da issue como feitas pelo App. O App age como uma pessoa em só dois casos: na tela de configurações, ele lê o e-mail dos usuários do jeito que o admin logado vê, pra sugerir o e-mail do aprovador; e com a Aprovação por grupo ligada, ele cuida dos grupos de cobertura em nome do admin do site responsável.</p>
 
 <h2>Escopos</h2>
 <ul>
 <li><code>read:jira-work</code>: ler issues, campos de aprovadores e projetos, e rodar buscas JQL.</li>
 <li><code>write:jira-work</code>: atualizar os campos de aprovadores.</li>
-<li><code>read:jira-user</code>: ler nome, tipo de conta, acesso aos produtos e grupos dos usuários, e checar a permissão de admin.</li>
+<li><code>read:jira-user</code>: ler nome, tipo de conta, acesso aos produtos e grupos dos usuários, checar a permissão de admin, e buscar e confirmar o e-mail dos aprovadores de ausência.</li>
 <li><code>storage:app</code>: guardar ausências, auditoria e configurações no armazenamento do Forge.</li>
 <li><code>manage:jira-configuration</code> (com impersonation): só pra Aprovação por grupo, pra ler membros de grupos e criar, ajustar e apagar os grupos <code>ad-cobertura-</code> do próprio App. Criar grupo exige administrador do site, então o App age em nome do admin que ligou a opção. Com a opção desligada, esse escopo não é usado.</li>
 </ul>
@@ -172,7 +173,8 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
 
 <h2>Tratamento de dados</h2>
 <ul>
-<li>Só fica guardado o que o App precisa: ausências, auditoria, configurações e a lista de aprovadores de ausência.</li>
+<li>Só fica guardado o que o App precisa: ausências, auditoria, configurações, a lista de aprovadores de ausência e o e-mail que o admin informa pra cada um.</li>
+<li>O e-mail dos aprovadores só é salvo depois que um admin confirma, nunca vai pra auditoria e é apagado quando a pessoa sai da lista ou a conta é desativada ou excluída.</li>
 <li>Os dados guardados ficam no armazenamento do Forge, isolados por instalação, dentro da infraestrutura da Atlassian.</li>
 <li>O App não lê descrições, comentários nem anexos das issues.</li>
 <li>O admin pode definir um prazo de retenção pra auditoria e pras ausências encerradas.</li>
@@ -182,7 +184,7 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
 <p>O App não chama nenhum serviço externo. Ele usa só as APIs do Jira da própria Atlassian, pela plataforma Forge, e é elegível ao programa Runs on Atlassian.</p>
 
 <h2>Trilha de auditoria</h2>
-<p>Toda ausência, autorização, delegação, delegação bloqueada, ajuste feito por admin, mudança de grupo de cobertura e mudança de configuração fica registrada com data, ação e as pessoas envolvidas. O admin pode filtrar por tipo e por pessoa.</p>
+<p>Toda ausência, autorização, delegação, delegação bloqueada, ajuste feito por admin, mudança de grupo de cobertura, mudança no e-mail de aprovador, limpeza por retenção e mudança de configuração fica registrada com data, ação e as pessoas envolvidas. O admin pode filtrar por tipo e por pessoa.</p>
 
 <h2>Como reportar uma vulnerabilidade</h2>
 <p>Se você encontrar uma vulnerabilidade de segurança neste App, fale direto com <a href="mailto:support@app-rl.com" style="color:#79E2F2">support@app-rl.com</a>, sem divulgar publicamente antes.</p>
