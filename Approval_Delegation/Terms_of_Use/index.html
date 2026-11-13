@@ -107,13 +107,13 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
 <p>By installing or using Approval Delegation for JSM ("the App"), the customer agrees to these Terms of Use. If you do not agree, do not install or use the App.</p>
 
 <h2>2. What the App does</h2>
-<p>The App lets people register absences and substitutes, optionally requires an authorization for each absence, and replaces absent approvers by their substitutes in the approver fields of Jira Service Management requests. It does not change workflows, approval steps or groups.</p>
+<p>The App lets people register absences and substitutes, optionally requires an authorization for each absence, and replaces absent approvers by their substitutes in the approver fields of Jira Service Management requests. It does not change workflows, approval steps or existing groups. When the customer turns on Group approvals, the App creates and manages its own cover groups and swaps them into the approver group fields of open requests.</p>
 
 <h2>3. Distribution</h2>
 <p>The App is not available yet. It will be listed on the Atlassian Marketplace, and the applicable Marketplace terms will also apply to that distribution channel.</p>
 
 <h2>4. Changes made by the App</h2>
-<p>When an absence is in effect, the App edits approver fields on the customer's issues. These edits may trigger automations configured by the customer. The customer is responsible for its settings, for who is on the absence approvers list, and for the substitutes its users choose.</p>
+<p>When an absence is in effect, the App edits approver fields on the customer's issues. These edits may trigger automations configured by the customer. The customer is responsible for its settings, for who is on the absence approvers list and the emails set for them, for the substitutes its users choose, and for the Automation rules it creates with the App's action.</p>
 
 <h2>5. No guarantee of delegation</h2>
 <p>Delegation depends on Jira settings outside the App, such as the approver field being on the edit screen and the App having permission to edit the issue. When a delegation cannot be applied, the App leaves the approvers unchanged and records the reason in the audit log.</p>
@@ -138,13 +138,13 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
 <p>Ao instalar ou usar o Approval Delegation for JSM ("o App"), o cliente concorda com estes Termos de Uso. Se não concordar, não instale nem use o App.</p>
 
 <h2>2. O que o App faz</h2>
-<p>O App permite que as pessoas cadastrem ausências e substitutos, pode exigir uma autorização para cada ausência, e troca os aprovadores ausentes pelos substitutos nos campos de aprovadores dos chamados do Jira Service Management. Ele não altera workflows, passos de aprovação nem grupos.</p>
+<p>O App permite que as pessoas cadastrem ausências e substitutos, pode exigir uma autorização para cada ausência, e troca os aprovadores ausentes pelos substitutos nos campos de aprovadores dos chamados do Jira Service Management. Ele não altera workflows, passos de aprovação nem grupos que já existem. Quando o cliente liga a Aprovação por grupo, o App cria e cuida dos próprios grupos de cobertura e coloca eles nos campos de grupo aprovador dos chamados abertos.</p>
 
 <h2>3. Distribuição</h2>
 <p>O App ainda não está disponível. Ele vai ser publicado no Atlassian Marketplace, e os termos do Marketplace também vão valer para esse canal de distribuição.</p>
 
 <h2>4. Alterações feitas pelo App</h2>
-<p>Enquanto uma ausência vale, o App edita os campos de aprovadores das issues do cliente. Essas edições podem disparar automações configuradas pelo cliente. O cliente é responsável pelas configurações, por quem está na lista de aprovadores de ausência e pelos substitutos que os usuários escolhem.</p>
+<p>Enquanto uma ausência vale, o App edita os campos de aprovadores das issues do cliente. Essas edições podem disparar automações configuradas pelo cliente. O cliente é responsável pelas configurações, por quem está na lista de aprovadores de ausência e pelos e-mails informados pra eles, pelos substitutos que os usuários escolhem e pelas regras de Automation que cria com a ação do App.</p>
 
 <h2>5. Sem garantia de delegação</h2>
 <p>A delegação depende de configurações do Jira que estão fora do App, como o campo de aprovadores estar na tela de edição e o App ter permissão de editar a issue. Quando uma delegação não pode ser aplicada, o App deixa os aprovadores como estão e registra o motivo na auditoria.</p>
