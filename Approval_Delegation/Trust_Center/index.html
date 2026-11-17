@@ -112,6 +112,7 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
 <li><code>write:jira-work</code>: update the approver fields.</li>
 <li><code>read:jira-user</code>: read user names, account type, product access and groups, check admin permission, and look up and confirm the email of absence approvers.</li>
 <li><code>storage:app</code>: keep absences, the audit log and settings in Forge hosted storage.</li>
+<li><code>report:personal-data</code>: tell Atlassian, once a week, which accounts the App keeps personal data for, and learn which ones were closed or changed, so the App can delete or update that data.</li>
 <li><code>manage:jira-configuration</code> (with impersonation): only for Group approvals, to read group members and create, adjust and delete the App's own <code>ad-cobertura-</code> groups. Creating groups needs a site admin, so the App acts on behalf of the admin who turned the option on. With the option off, this scope is not used.</li>
 </ul>
 
@@ -157,6 +158,7 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
 <li><code>write:jira-work</code>: atualizar os campos de aprovadores.</li>
 <li><code>read:jira-user</code>: ler nome, tipo de conta, acesso aos produtos e grupos dos usuários, checar a permissão de admin, e buscar e confirmar o e-mail dos aprovadores de ausência.</li>
 <li><code>storage:app</code>: guardar ausências, auditoria e configurações no armazenamento do Forge.</li>
+<li><code>report:personal-data</code>: informar à Atlassian, uma vez por semana, de quais contas o App guarda dado pessoal, e saber quais foram encerradas ou mudaram, pra apagar ou atualizar esses dados.</li>
 <li><code>manage:jira-configuration</code> (com impersonation): só pra Aprovação por grupo, pra ler membros de grupos e criar, ajustar e apagar os grupos <code>ad-cobertura-</code> do próprio App. Criar grupo exige administrador do site, então o App age em nome do admin que ligou a opção. Com a opção desligada, esse escopo não é usado.</li>
 </ul>
 
