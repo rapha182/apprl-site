@@ -113,7 +113,7 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
 <h3>3.1 Jira data, read in real time</h3>
 <ul>
 <li>Tickets the person can see: fields chosen by the admin, status, attachments, Forms answers, comments, approvals and the Assets attributes chosen by the admin.</li>
-<li>Basic data of the signed-in person: account ID and display name.</li>
+<li>Basic data of the signed-in person: account ID, display name, email address (only when the person's Atlassian privacy settings allow it) and profile photo.</li>
 <li>Which sites the account can access, so the person can pick their company.</li>
 </ul>
 <p>This data is read when a screen is opened and sent to the person's phone. FieldOps does <strong>not</strong> keep copies of tickets, fields, comments or attachments.</p>
@@ -122,11 +122,16 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
 <h3>3.3 Data stored by AppRL</h3>
 <ul>
 <li><strong>Site record:</strong> cloud ID, site URL, site name, activation status and the time of the last check from the FieldOps app installed in Jira.</li>
-<li><strong>Sign-in sessions:</strong> the Atlassian access and refresh tokens, account ID, display name, selected site and a security token against forged requests. The whole session is <strong>encrypted</strong> (AES-GCM) before it is saved. The browser only keeps a random session cookie.</li>
+<li><strong>Sign-in sessions:</strong> the Atlassian access and refresh tokens, account ID, display name, email address, link to the profile photo, selected site and a security token against forged requests. The whole session is <strong>encrypted</strong> (AES-GCM) before it is saved. The browser only keeps a random session cookie.</li>
 <li>Short-lived sign-in state used during the Atlassian login.</li>
 </ul>
-<h3>3.4 What happens when someone approves</h3>
-<p>The decision (approve or decline) is sent to Jira Service Management, and the justification is written by the person as a public comment on the ticket. Both stay in your Jira site, not with AppRL.</p>
+<h3>3.4 What happens when someone updates a ticket</h3>
+<p>Comments, status changes (transitions), field values, attachments and approval decisions are sent straight to Jira, with the person's own permissions. Everything stays in your Jira site, not with AppRL.</p>
+<ul>
+<li><strong>Photos and files:</strong> they pass through the FieldOps backend only while they are being sent to Jira, and are not saved by AppRL. Photos taken in the app are resized on the phone before they are sent.</li>
+<li><strong>Approvals:</strong> the decision (approve or decline) goes to Jira Service Management, and the justification is written by the person as a public comment on the ticket.</li>
+<li><strong>Profile photo:</strong> loaded from Atlassian when the Profile screen opens. AppRL does not save the image.</li>
+</ul>
 
 <h2>4. What the app never collects</h2>
 <ul>
@@ -148,13 +153,18 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
 <li>Sign-in sessions last up to 12 hours. They are deleted when the person signs out, and expired sessions are removed automatically within one day.</li>
 <li>When an admin deactivates FieldOps or uninstalls the app from Jira, the site is marked as disabled and nobody from it can sign in.</li>
 <li>Each person can remove FieldOps' access at any time in <strong>id.atlassian.com &gt; Connected apps</strong>. Admins can do the same for the whole site in <strong>admin.atlassian.com</strong>.</li>
+<li>After an uninstall, sessions of people from that site stop working right away and are deleted within two days at most.</li>
+<li>Deleted sessions can remain in Cloudflare's automatic database backups (point-in-time recovery) for up to 30 days. They stay encrypted there and are not used.</li>
 <li>To ask for the deletion of the site record or any other data, contact <a href="mailto:support@app-rl.com" style="color:#79E2F2">support@app-rl.com</a>.</li>
 </ul>
 
-<h2>7. Changes to this policy</h2>
+<h2>7. Data protection role (GDPR and LGPD)</h2>
+<p>For the personal data kept in sign-in sessions, AppRL acts as a <strong>processor</strong> on behalf of the customer, who is the <strong>controller</strong>. AppRL uses this data only to run FieldOps. Cloudflare is our sub-processor for hosting; it may process data outside the country of the customer, including the United States.</p>
+
+<h2>8. Changes to this policy</h2>
 <p>If the data FieldOps handles changes, this page will be updated before the change goes live.</p>
 
-<h2>8. Contact</h2>
+<h2>9. Contact</h2>
 <p>Questions about this policy: <a href="mailto:support@app-rl.com" style="color:#79E2F2">support@app-rl.com</a>.</p>
 </div>
 <div data-lang-block="pt-BR" hidden>
@@ -168,7 +178,7 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
 <h3>3.1 Dados do Jira, lidos na hora</h3>
 <ul>
 <li>Chamados que a pessoa pode ver: campos escolhidos pelo admin, situação, anexos, respostas de Forms, comentários, aprovações e os atributos do Assets escolhidos pelo admin.</li>
-<li>Dados básicos da pessoa logada: account ID e nome de exibição.</li>
+<li>Dados básicos da pessoa logada: account ID, nome de exibição, e-mail (só quando as configurações de privacidade da Atlassian da pessoa permitem) e foto do perfil.</li>
 <li>Quais sites a conta acessa, pra pessoa escolher a empresa dela.</li>
 </ul>
 <p>Esses dados são lidos quando uma tela é aberta e enviados pro celular da pessoa. O FieldOps <strong>não</strong> guarda cópia de chamados, campos, comentários ou anexos.</p>
@@ -177,11 +187,16 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
 <h3>3.3 Dados guardados pela AppRL</h3>
 <ul>
 <li><strong>Cadastro do site:</strong> cloud ID, URL e nome do site, situação da ativação e o horário da última verificação feita pelo app FieldOps instalado no Jira.</li>
-<li><strong>Sessões de login:</strong> os tokens de acesso e de renovação da Atlassian, account ID, nome de exibição, site escolhido e um token de segurança contra requisições forjadas. A sessão inteira é <strong>criptografada</strong> (AES-GCM) antes de ser salva. O navegador guarda só um cookie de sessão aleatório.</li>
+<li><strong>Sessões de login:</strong> os tokens de acesso e de renovação da Atlassian, account ID, nome de exibição, e-mail, link da foto do perfil, site escolhido e um token de segurança contra requisições forjadas. A sessão inteira é <strong>criptografada</strong> (AES-GCM) antes de ser salva. O navegador guarda só um cookie de sessão aleatório.</li>
 <li>Um estado temporário usado durante o login da Atlassian.</li>
 </ul>
-<h3>3.4 O que acontece quando alguém aprova</h3>
-<p>A decisão (aprovar ou reprovar) é enviada ao Jira Service Management, e a justificativa é escrita pela própria pessoa como comentário público no chamado. As duas ficam no seu Jira, não com a AppRL.</p>
+<h3>3.4 O que acontece quando alguém atualiza um chamado</h3>
+<p>Comentários, mudanças de status (transições), valores de campos, anexos e decisões de aprovação vão direto pro Jira, com as permissões da própria pessoa. Tudo fica no seu Jira, não com a AppRL.</p>
+<ul>
+<li><strong>Fotos e arquivos:</strong> passam pelo backend do FieldOps só durante o envio pro Jira e não são guardados pela AppRL. As fotos tiradas no app são reduzidas no próprio celular antes do envio.</li>
+<li><strong>Aprovações:</strong> a decisão (aprovar ou reprovar) vai pro Jira Service Management, e a justificativa é escrita pela própria pessoa como comentário público no chamado.</li>
+<li><strong>Foto do perfil:</strong> carregada da Atlassian quando a tela Perfil abre. A AppRL não guarda a imagem.</li>
+</ul>
 
 <h2>4. O que o app nunca coleta</h2>
 <ul>
@@ -203,13 +218,18 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
 <li>A sessão de login dura até 12 horas. Ela é apagada quando a pessoa sai, e sessões vencidas são removidas automaticamente em até um dia.</li>
 <li>Quando um admin desativa o FieldOps ou desinstala o app do Jira, o site fica marcado como desativado e ninguém dele consegue entrar.</li>
 <li>Cada pessoa pode tirar o acesso do FieldOps quando quiser, em <strong>id.atlassian.com &gt; Connected apps</strong>. Admins podem fazer o mesmo pro site todo no <strong>admin.atlassian.com</strong>.</li>
+<li>Depois de uma desinstalação, as sessões das pessoas daquele site param de funcionar na hora e são apagadas em no máximo dois dias.</li>
+<li>Sessões apagadas podem continuar nos backups automáticos do banco da Cloudflare (recuperação ponto a ponto) por até 30 dias. Lá elas seguem criptografadas e não são usadas.</li>
 <li>Pra pedir a exclusão do cadastro do site ou de qualquer outro dado, fale com <a href="mailto:support@app-rl.com" style="color:#79E2F2">support@app-rl.com</a>.</li>
 </ul>
 
-<h2>7. Mudanças nesta política</h2>
+<h2>7. Papel na proteção de dados (LGPD e GDPR)</h2>
+<p>Para os dados pessoais guardados nas sessões de login, a AppRL atua como <strong>operadora</strong> em nome do cliente, que é o <strong>controlador</strong>. A AppRL usa esses dados só pra fazer o FieldOps funcionar. A Cloudflare é nossa suboperadora de hospedagem e pode processar dados fora do país do cliente, inclusive nos Estados Unidos.</p>
+
+<h2>8. Mudanças nesta política</h2>
 <p>Se os dados que o FieldOps trata mudarem, esta página é atualizada antes da mudança entrar em produção.</p>
 
-<h2>8. Contato</h2>
+<h2>9. Contato</h2>
 <p>Dúvidas sobre esta política: <a href="mailto:support@app-rl.com" style="color:#79E2F2">support@app-rl.com</a>.</p>
 </div>
 
