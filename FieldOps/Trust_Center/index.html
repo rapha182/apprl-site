@@ -113,7 +113,8 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
 <li><code>read:jira-work</code>, <code>read:jira-user</code>: read the tickets, fields, comments and attachments the person can see, and the person's name.</li>
 <li><code>read:servicedesk-request</code>: read requests, Forms and approvals.</li>
 <li><code>read:cmdb-object:jira</code>: read the Assets attributes chosen by the admin.</li>
-<li><code>write:servicedesk-request</code>: answer approvals and save the justification as a comment.</li>
+<li><code>write:jira-work</code>: add comments, change the status (transitions), fill in the fields of the transition screen and upload attachments.</li>
+<li><code>write:servicedesk-request</code>: answer approvals, and add comments and attachments to requests as internal or visible to the customer.</li>
 <li><code>offline_access</code>: renew the sign-in without asking for the password again, while the session lasts.</li>
 </ul>
 <h3>Settings app (Forge)</h3>
@@ -128,8 +129,9 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
 <ul>
 <li>All traffic uses HTTPS.</li>
 <li>Sign-in sessions, including Atlassian tokens, are encrypted with AES-GCM before they are stored. Tokens are never sent to the browser.</li>
-<li>The session cookie is random, <code>HttpOnly</code>, <code>Secure</code> and <code>SameSite=Lax</code>, and lasts up to 12 hours.</li>
-<li>Every action that changes data (approvals) requires a per-session security token against forged requests.</li>
+<li>The session cookie is random, <code>HttpOnly</code>, <code>Secure</code> and <code>SameSite=Lax</code>, and lasts up to 12 hours. A new session ID and security token are created at every sign-in.</li>
+<li>Every action that changes data (comments, transitions, attachments and approvals) requires a per-session security token against forged requests.</li>
+<li>Uploads accept only images, PDF, text and Office files, up to 6 MB each, with a limit per minute. Files go straight to Jira and are not stored by FieldOps.</li>
 <li>Ticket content and attachments are not stored by FieldOps. Assets attributes not chosen by the admin never reach the phone.</li>
 <li>The app does not track the device location.</li>
 </ul>
@@ -170,7 +172,8 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
 <li><code>read:jira-work</code>, <code>read:jira-user</code>: ler os chamados, campos, comentários e anexos que a pessoa pode ver, e o nome dela.</li>
 <li><code>read:servicedesk-request</code>: ler solicitações, Forms e aprovações.</li>
 <li><code>read:cmdb-object:jira</code>: ler os atributos do Assets escolhidos pelo admin.</li>
-<li><code>write:servicedesk-request</code>: responder aprovações e salvar a justificativa como comentário.</li>
+<li><code>write:jira-work</code>: comentar, mudar o status (transições), preencher os campos da tela de transição e enviar anexos.</li>
+<li><code>write:servicedesk-request</code>: responder aprovações e incluir comentários e anexos nas solicitações, como internos ou visíveis pro cliente.</li>
 <li><code>offline_access</code>: renovar o login sem pedir a senha de novo, enquanto a sessão durar.</li>
 </ul>
 <h3>App de configurações (Forge)</h3>
@@ -185,8 +188,9 @@ footer{max-width:1280px;margin:0 auto;padding:0 26px 34px;color:rgba(255,255,255
 <ul>
 <li>Todo o tráfego usa HTTPS.</li>
 <li>As sessões de login, incluindo os tokens da Atlassian, são criptografadas com AES-GCM antes de serem salvas. Os tokens nunca vão pro navegador.</li>
-<li>O cookie de sessão é aleatório, <code>HttpOnly</code>, <code>Secure</code> e <code>SameSite=Lax</code>, e dura até 12 horas.</li>
-<li>Toda ação que altera dados (aprovações) exige um token de segurança por sessão, contra requisições forjadas.</li>
+<li>O cookie de sessão é aleatório, <code>HttpOnly</code>, <code>Secure</code> e <code>SameSite=Lax</code>, e dura até 12 horas. A cada login são criados um novo ID de sessão e um novo token de segurança.</li>
+<li>Toda ação que altera dados (comentários, transições, anexos e aprovações) exige um token de segurança por sessão, contra requisições forjadas.</li>
+<li>Os uploads aceitam só imagens, PDF, texto e arquivos do Office, até 6 MB cada, com limite por minuto. Os arquivos vão direto pro Jira e não são guardados pelo FieldOps.</li>
 <li>O FieldOps não guarda conteúdo de chamados nem anexos. Atributos do Assets que o admin não escolheu nunca chegam no celular.</li>
 <li>O app não rastreia a localização do aparelho.</li>
 </ul>
